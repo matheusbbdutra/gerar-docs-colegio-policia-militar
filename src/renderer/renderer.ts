@@ -1,25 +1,32 @@
 import { initFormMatricula } from "./pages/form-matricula";
 import "./index.css";
-import {initFormInscricao} from "./pages/form-inscricao";
+import { initFormInscricao } from "./pages/form-inscricao";
+import formMatriculaHtml from './pages/form-matricula.html?raw';
+import homeHtml from './pages/home.html?raw';
+import formInscricaoHtml from './pages/form-inscricao.html?raw';
+// Garante CSS + fontes dos ícones no bundle
+import 'bootstrap-icons/font/bootstrap-icons.css';
+// Import de assets para funcionar no build (Vite reescreve URLs)
+import logoUrl from './images/CPM-319x445.png';
+import brasaoUrl from './images/brasao.png';
 
 const main = document.getElementById("main-content")!;
 const links = document.querySelectorAll<HTMLAnchorElement>(".nav-link");
 
 async function loadHome() {
-    const response = await fetch('./pages/home.html');
-    main.innerHTML = await response.text();
+    // Substitui caminho relativo por URL processada pelo Vite
+    main.innerHTML = homeHtml.replace('../images/CPM-319x445.png', logoUrl);
 }
 
 
 async function loadFormMatricula() {
-    const response = await fetch('./pages/form-matricula.html');
-    main.innerHTML = await response.text();
+    // Garante que o brasão apareça no build
+    main.innerHTML = formMatriculaHtml.replace('../images/brasao.png', brasaoUrl);
     initFormMatricula(main);
 }
 
 async function loadInscricao() {
-    const response = await fetch('./pages/form-inscricao.html');
-    main.innerHTML = await response.text();
+    main.innerHTML = formInscricaoHtml;
     initFormInscricao(main);
 }
 
@@ -33,7 +40,7 @@ links.forEach(a => {
 
         if (form === "form-matricula") loadFormMatricula();
         else if (form === "form-inscricao") loadInscricao();
-        // futuros forms: else if (form === "outro-form") { ... }
+        else loadHome();
     });
 });
 //

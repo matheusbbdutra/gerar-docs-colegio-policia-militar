@@ -1,4 +1,4 @@
-export function initFichaAluno(root: HTMLElement) {
+export function initFormMatricula(root: HTMLElement) {
     const form = root.querySelector<HTMLFormElement>('#student-form')!;
     const clearBtn = root.querySelector<HTMLButtonElement>('#clear-btn')!;
     const printBtn = root.querySelector<HTMLButtonElement>('#print-btn')!;

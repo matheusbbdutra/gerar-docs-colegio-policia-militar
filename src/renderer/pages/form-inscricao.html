@@ -1,337 +1,188 @@
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 id="tituloCadastro">Cadastro de Candidato</h2>
-        <button id="btnVoltarLista" class="btn btn-secondary">Voltar para Lista</button>
-    </div>
+<div class="container mx-auto p-4 sm:p-6 md:p-8 bg-gray-100">
 
-    <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">Formulário de Cadastro</h5>
+    <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+
+        <div class="bg-gray-800 p-4 flex justify-between items-center">
+            <h2 id="tituloCadastro" class="text-xl font-bold text-white">Cadastro de Candidato</h2>
         </div>
-        <div class="card-body">
+
+        <div class="p-6">
             <form id="formCadastro" class="needs-validation" novalidate>
-                <!-- Dados Pessoais -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h5 class="border-bottom pb-2">Dados Pessoais</h5>
-                    </div>
 
-                    <!-- Nome do candidato em linha única -->
-                    <div class="col-md-12 mb-3">
-                        <label for="nome" class="form-label required-field">Nome completo do candidato</label>
-                        <input type="text" class="form-control" id="nome" name="nome" required>
-                        <div class="invalid-feedback">
-                            Por favor, informe o nome completo do candidato.
+                <section class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-6">Dados Pessoais</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-y-4">
+
+                        <div class="col-span-12">
+                            <label for="nome" class="block text-sm font-medium text-gray-700">Nome completo do candidato <span class="text-red-500">*</span></label>
+                            <input type="text" id="nome" name="nome" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-6">
+                            <label for="cpf" class="block text-sm font-medium text-gray-700">CPF do candidato (opcional)</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm cpf-mask" id="cpf" name="cpfCandidato">
+                        </div>
+
+                        <div class="col-span-12 md:col-span-6">
+                            <label for="dataNascimento" class="block text-sm font-medium text-gray-700">Data de nascimento <span class="text-red-500">*</span></label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm datepicker" id="dataNascimento" name="dataNascimento" placeholder="DD/MM/AAAA" required>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-8">
+                            <label for="nomeMae" class="block text-sm font-medium text-gray-700">Nome completo da mãe <span class="text-red-500">*</span></label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" id="nomeMae" name="nomeMae" required>
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label for="cpfMae" class="block text-sm font-medium text-gray-700">CPF da mãe</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm cpf-mask" id="cpfMae" name="cpfMae">
+                        </div>
+
+                        <div class="col-span-12 md:col-span-8">
+                            <label for="nomePai" class="block text-sm font-medium text-gray-700">Nome completo do pai</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" id="nomePai" name="nomePai">
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label for="cpfPai" class="block text-sm font-medium text-gray-700">CPF do pai</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm cpf-mask" id="cpfPai" name="cpfPai">
+                        </div>
+
+                        <div class="col-span-12 md:col-span-8">
+                            <label for="responsavel" class="block text-sm font-medium text-gray-700">Responsável legal <span class="text-red-500">*</span></label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" id="responsavel" name="responsavelLegal" required>
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label for="cpfResponsavel" class="block text-sm font-medium text-gray-700">CPF do responsável legal <span class="text-red-500">*</span></label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm cpf-mask" id="cpfResponsavel" name="cpfResponsavel" required>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-4">
+                            <label for="telefone1" class="block text-sm font-medium text-gray-700">Telefone 1 <span class="text-red-500">*</span></label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm phone-mask" id="telefone1" name="telefone1" required>
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label for="telefone2" class="block text-sm font-medium text-gray-700">Telefone 2</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm phone-mask" id="telefone2" name="telefone2">
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" id="email" name="email">
+                        </div>
+
+                        <div class="col-span-12">
+                            <label class="block text-sm font-medium text-gray-700">Meio de contato preferencial:</label>
+                            <div class="mt-2 flex items-center space-x-6">
+                                <div class="flex items-center">
+                                    <input id="isWhatsapp" name="isWhatsapp" type="checkbox" value="true" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <label for="isWhatsapp" class="ml-2 block text-sm text-gray-900">WhatsApp</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="isLigacao" name="isLigacao" type="checkbox" value="true" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <label for="isLigacao" class="ml-2 block text-sm text-gray-900">Ligação</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- CPF e data de nascimento do candidato -->
-                    <div class="col-md-6 mb-3">
-                        <label for="cpf" class="form-label">CPF do candidato (opcional)</label>
-                        <input type="text" class="form-control cpf-mask" id="cpf" name="cpf">
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="dataNascimento" class="form-label required-field">Data de nascimento</label>
-                        <input type="text" class="form-control datepicker" id="dataNascimento" name="dataNascimento" placeholder="DD/MM/AAAA" required>
-                        <div class="invalid-feedback">
-                            Por favor, informe a data de nascimento.
+                <section class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-4">Deficiência / TEA / AH</h3>
+                    <div class="flex items-center space-x-6 mb-4">
+                        <label class="text-sm font-medium text-gray-700">Possui condição de PCD / AH / SD?</label>
+                        <div class="flex items-center">
+                            <input id="pcdSim" name="pcd" type="radio" value="sim" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <label for="pcdSim" class="ml-2 block text-sm text-gray-900">Sim</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input id="pcdNao" name="pcd" type="radio" value="não" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500" checked>
+                            <label for="pcdNao" class="ml-2 block text-sm text-gray-900">Não</label>
                         </div>
                     </div>
-
-                    <!-- Dados da mãe -->
-                    <div class="col-md-8 mb-3">
-                        <label for="nomeMae" class="form-label required-field">Nome completo da mãe</label>
-                        <input type="text" class="form-control" id="nomeMae" name="nomeMae" required>
-                        <div class="invalid-feedback">
-                            Por favor, informe o nome completo da mãe.
+                    <div id="deficienciaContainer" style="display: none;" class="bg-gray-50 border border-gray-200 p-4 rounded-md">
+                        <h4 class="font-semibold mb-3 text-gray-700">Tipo(s) de condição</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="flex items-center"><input type="checkbox" name="defFisica" id="defFisica" value="true" class="h-4 w-4 rounded"><label for="defFisica" class="ml-2 text-sm">Física</label></div>
+                            <div class="flex items-center"><input type="checkbox" name="defAuditiva" id="defAuditiva" value="true" class="h-4 w-4 rounded"><label for="defAuditiva" class="ml-2 text-sm">Auditiva</label></div>
+                            <div class="flex items-center"><input type="checkbox" name="defIntelectual" id="defIntelectual" value="true" class="h-4 w-4 rounded"><label for="defIntelectual" class="ml-2 text-sm">Intelectual</label></div>
+                            <div class="flex items-center"><input type="checkbox" name="defTEA" id="defTEA" value="true" class="h-4 w-4 rounded"><label for="defTEA" class="ml-2 text-sm">TEA</label></div>
+                            <div class="flex items-center"><input type="checkbox" name="defAltasHabilidades" id="defAH" value="true" class="h-4 w-4 rounded"><label for="defAH" class="ml-2 text-sm">Altas Habilidades</label></div>
+                        </div>
+                        <div class="mt-4">
+                            <label for="outroDeficiencia" class="block text-sm font-medium text-gray-700">Outro (especificar):</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" id="outroDeficiencia" name="defOutro">
                         </div>
                     </div>
+                </section>
 
-                    <div class="col-md-4 mb-3">
-                        <label for="cpfMae" class="form-label">CPF da mãe</label>
-                        <input type="text" class="form-control cpf-mask" id="cpfMae" name="cpfMae">
-                    </div>
-
-                    <!-- Dados do pai -->
-                    <div class="col-md-8 mb-3">
-                        <label for="nomePai" class="form-label">Nome completo do pai</label>
-                        <input type="text" class="form-control" id="nomePai" name="nomePai">
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label for="cpfPai" class="form-label">CPF do pai</label>
-                        <input type="text" class="form-control cpf-mask" id="cpfPai" name="cpfPai">
-                    </div>
-
-                    <!-- Dados do responsável -->
-                    <div class="col-md-8 mb-3">
-                        <label for="responsavel" class="form-label required-field">Responsável legal</label>
-                        <input type="text" class="form-control" id="responsavel" name="responsavel" required>
-                        <div class="invalid-feedback">
-                            Por favor, informe o responsável legal.
+                <div class="bg-blue-600 text-white p-4 rounded-lg mb-8" role="group" aria-labelledby="vinculo-pm-title">
+                    <h3 id="vinculo-pm-title" class="text-lg font-semibold border-b border-blue-400 pb-2 mb-4">Vínculo PM</h3>
+                    <div class="flex items-center space-x-6 mb-4">
+                        <label class="text-sm font-medium">É filho ou neto de policial militar (PMPB)? <span class="text-yellow-300">*</span></label>
+                        <div class="flex items-center">
+                            <input id="pmilitarSim" name="pmilitar" type="radio" value="Sim" class="h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400">
+                            <label for="pmilitarSim" class="ml-2 block text-sm">Sim</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input id="pmilitarNao" name="pmilitar" type="radio" value="Não" class="h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400" checked>
+                            <label for="pmilitarNao" class="ml-2 block text-sm">Não</label>
                         </div>
                     </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label for="cpfResponsavel" class="form-label required-field">CPF do responsável legal</label>
-                        <input type="text" class="form-control cpf-mask" id="cpfResponsavel" name="cpfResponsavel" required>
-                        <div class="invalid-feedback">
-                            Por favor, informe o CPF do responsável legal.
+                    <div id="frameMilitar" style="display: none;" class="grid grid-cols-1 md:grid-cols-3 gap-x-6">
+                        <div class="md:col-span-2">
+                            <label for="nomePM" class="block text-sm font-medium">Nome completo do parente militar:</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 bg-gray-100 rounded-md shadow-sm text-gray-800" id="nomePM" name="nomePM">
                         </div>
-                    </div>
-
-                    <!-- Telefones e email -->
-                    <div class="col-md-4 mb-3">
-                        <label for="telefone1" class="form-label required-field">Telefone 1</label>
-                        <input type="text" class="form-control phone-mask" id="telefone1" name="telefone1" required>
-                        <div class="invalid-feedback">
-                            Por favor, informe um telefone para contato.
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label for="telefone2" class="form-label">Telefone 2</label>
-                        <input type="text" class="form-control phone-mask" id="telefone2" name="telefone2">
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email">
-                        <div class="invalid-feedback">
-                            Por favor, informe um email válido.
-                        </div>
-                    </div>
-                    <!-- Meio de contato preferencial -->
-                    <div class="col-md-12 mb-3">
-                        <label class="form-label">Meio de contato preferencial:</label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="isWhatsapp" name="isWhatsapp" value="true">
-                            <label class="form-check-label" for="isWhatsapp">WhatsApp</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="isLigacao" name="isLigacao" value="true">
-                            <label class="form-check-label" for="isLigacao">Ligação</label>
+                        <div>
+                            <label for="matriculaPM" class="block text-sm font-medium">Matrícula do parente militar:</label>
+                            <input type="text" class="mt-1 block w-full p-2 border border-gray-300 bg-gray-100 rounded-md shadow-sm text-gray-800" id="matriculaPM" name="matriculaPM">
                         </div>
                     </div>
                 </div>
 
-                <!-- Deficiência / TEA / AH -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h5 class="border-bottom pb-2">Deficiência / TEA / AH</h5>
+                <section id="frameTurmaPmilitar" style="display: none;" class="mb-8 border border-green-300 bg-green-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-green-800 border-b border-green-200 pb-2 mb-4">Turmas Disponíveis (Cota PMPB)</h3>
+                    <div id="turmaPmilitarOptions" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="text-gray-500">Carregando turmas...</p>
                     </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label d-block">Possui condição de PCD / AH / SD?</label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pcd" id="pcdSim" value="sim">
-                            <label class="form-check-label" for="pcdSim">Sim</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pcd" id="pcdNao" value="não" checked>
-                            <label class="form-check-label" for="pcdNao">Não</label>
-                        </div>
+                </section>
+                <section id="frameTurmaAmpla" class="mb-8 border border-blue-300 bg-blue-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-800 border-b border-blue-200 pb-2 mb-4">Turmas Disponíveis (Ampla Concorrência)</h3>
+                    <div id="turmaAmplaOptions" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="text-gray-500">Carregando turmas...</p>
                     </div>
+                </section>
 
-                    <div class="col-12" id="deficienciaContainer" style="display: none;">
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h6 class="card-title">Tipo(s) de condição</h6>
-                                <div class="row">
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="def_fisica" id="defFisica" value="Física">
-                                            <label class="form-check-label" for="defFisica">Física</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="def_auditiva" id="defAuditiva" value="Auditiva">
-                                            <label class="form-check-label" for="defAuditiva">Auditiva</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="def_intelectual" id="defIntelectual" value="Intelectual">
-                                            <label class="form-check-label" for="defIntelectual">Intelectual</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="def_tea" id="defTEA" value="TEA">
-                                            <label class="form-check-label" for="defTEA">TEA</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="def_ah" id="defAH" value="Altas Habilidades">
-                                            <label class="form-check-label" for="defAH">Altas Habilidades</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-8">
-                                        <label for="outroDeficiencia" class="form-label">Outro (especificar):</label>
-                                        <input type="text" class="form-control" id="outroDeficiencia" name="outroDeficiencia">
-                                    </div>
-                                </div>
+                <section class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-6">Documentação</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-gray-700">Documentação - Cota Militar</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center"><input type="checkbox" id="docMil1" name="docIdentidadeFuncional" value="true" class="h-4 w-4 rounded"><label for="docMil1" class="ml-2 text-sm">Cópia da Identidade Funcional do PM</label></div>
+                                <div class="flex items-center"><input type="checkbox" id="docMil2" name="docComprovacaoDependencia" value="true" class="h-4 w-4 rounded"><label for="docMil2" class="ml-2 text-sm">Comprovação legal de dependência</label></div>
+                                <div class="flex items-center"><input type="checkbox" id="docMil3" name="docCertidaoObito" value="true" class="h-4 w-4 rounded"><label for="docMil3" class="ml-2 text-sm">Certidão de óbito (militar falecido)</label></div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-gray-700">Documentação - PCD</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center"><input type="checkbox" id="docPcd1" name="docLaudoMedico" value="true" class="h-4 w-4 rounded"><label for="docPcd1" class="ml-2 text-sm">Apresentação de laudo médico atualizado</label></div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2 border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-semibold mb-3 text-gray-700">Documentação Geral</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="flex items-center"><input type="checkbox" id="docGeral1" name="docDeclaracaoEscola" value="true" class="h-4 w-4 rounded"><label for="docGeral1" class="ml-2 text-sm">Declaração da escola de origem</label></div>
+                                <div class="flex items-center"><input type="checkbox" id="docGeral2" name="docIdentidadeResponsavel" value="true" class="h-4 w-4 rounded"><label for="docGeral2" class="ml-2 text-sm">Identidade do responsável legal</label></div>
+                                <div class="flex items-center"><input type="checkbox" id="docGeral3" name="docCertidaoNascimento" value="true" class="h-4 w-4 rounded"><label for="docGeral3" class="ml-2 text-sm">Certidão/RG/CPF do candidato</label></div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Seção de vínculo com PM -->
-                <div class="card mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Vínculo PM</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label class="form-label required-field">É filho ou neto de policial militar (PMPB)?</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pmilitar" id="pmilitarSim" value="Sim">
-                                    <label class="form-check-label" for="pmilitarSim">Sim</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pmilitar" id="pmilitarNao" value="Não" checked>
-                                    <label class="form-check-label" for="pmilitarNao">Não</label>
-                                </div>
-                            </div>
-                        </div>
+                </section>
 
-                        <!-- Dados do parente militar (visível apenas se "Sim" for selecionado) -->
-                        <div id="frameMilitar" style="display: none;">
-                            <div class="row mb-3">
-                                <div class="col-md-8">
-                                    <label for="nomePM" class="form-label required-field">Nome completo do parente militar:</label>
-                                    <input type="text" class="form-control" id="nomePM" name="nomePM">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="matriculaPM" class="form-label required-field">Matrícula do parente militar:</label>
-                                    <input type="text" class="form-control" id="matriculaPM" name="matriculaPM">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Seção de turmas para cota PM (visível apenas se "Sim" for selecionado) -->
-                <div class="card mb-4" id="frameTurmaPmilitar" style="display: none;">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">Turmas Disponíveis (Cota PMPB)</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row" id="turmaPmilitarOptions">
-                            <!-- Opções de turma serão geradas dinamicamente pelo JavaScript -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção de turmas para ampla concorrência (visível apenas se "Não" for selecionado) -->
-                <div class="card mb-4" id="frameTurmaAmpla">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0">Turmas Disponíveis (Ampla Concorrência)</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row" id="turmaAmplaOptions">
-                            <!-- Opções de turma serão geradas dinamicamente pelo JavaScript -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Documentação -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h5 class="border-bottom pb-2">Documentação</h5>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0">Documentação - Cota Militar</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="docMil1" name="docMil1">
-                                    <label class="form-check-label" for="docMil1">
-                                        Cópia da Identidade Funcional do pai/mãe/avô/avó policial
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="docMil2" name="docMil2">
-                                    <label class="form-check-label" for="docMil2">
-                                        Comprovação legal de dependência
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="docMil3" name="docMil3">
-                                    <label class="form-check-label" for="docMil3">
-                                        Certidão de óbito (militar falecido)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0">Documentação - PCD</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="docPcd1" name="docPcd1">
-                                    <label class="form-check-label" for="docPcd1">
-                                        Apresentação de laudo médico atualizado
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-12 mb-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0">Documentação Geral</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="docGeral1" name="docGeral1">
-                                            <label class="form-check-label" for="docGeral1">
-                                                Declaração da escola de origem
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="docGeral2" name="docGeral2">
-                                            <label class="form-check-label" for="docGeral2">
-                                                Identidade do responsável legal
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="docGeral3" name="docGeral3">
-                                            <label class="form-check-label" for="docGeral3">
-                                                Certidão de nascimento/RG/CPF do candidato
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Botões de ação -->
-                <div class="row">
-                    <div class="col-12 d-flex justify-content-between">
-                        <button type="button" id="btnLimparForm" class="btn btn-secondary">Limpar Formulário</button>
-                        <button type="submit" id="btnSalvarCadastro" class="btn btn-primary">Salvar Cadastro</button>
-                    </div>
+                <div class="flex justify-end items-center mt-8 pt-6 border-t">
+                    <button type="button" id="btnLimparForm" class="px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 mr-4">Limpar Formulário</button>
+                    <button type="submit" id="btnImprimirFicha" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 mr-4"><i class="bi bi-printer mr-1"></i> Imprimir Ficha</button>
+                    <button type="submit" id="btnGerarPdf" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700"><i class="bi bi-printer mr-1"></i> Gerar PDF</button>
                 </div>
             </form>
         </div>

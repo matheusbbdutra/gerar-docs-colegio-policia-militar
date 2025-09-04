@@ -13,7 +13,7 @@ let dataDir = path.join(app.getPath('userData'), 'gerar-docs');
 let formInscricaoGerarPDF: FormInscricaoGerarPDFService = new FormInscricaoGerarPDFService(dataDir);
 let formMatriculaGerarPDF: FormMatriculaGerarPDFService = new FormMatriculaGerarPDFService(dataDir);
 
-function createWindow() {
+async function createWindow() {
     win = new BrowserWindow({
         width: 1200,
         height: 800,
@@ -24,10 +24,17 @@ function createWindow() {
             sandbox: false // Sandbox: true pode restringir o acesso do preload
         }
     });
+    win.webContents.on('did-fail-load', (_, code, desc, url) => console.error('did-fail-load', code, desc, url));
+    win.webContents.on('render-process-gone', (_, d) => console.error('render-process-gone', d));
+    win.webContents.on('console-message', (_, level, message, line, source) => console.log('renderer:', { level, message, line, source }));
+
+    await fs.ensureDir(dataDir);
+    await fs.ensureDir(path.join(dataDir, 'fichas'));
 
     // Registra todos os handlers IPC ANTES de carregar a URL
     setupIpcHandlers();
-    win.webContents.openDevTools();
+    win.setMenuBarVisibility(false);
+
     if (isDev) {
         win.loadURL(process.env.VITE_DEV_SERVER_URL!);
         win.webContents.openDevTools();

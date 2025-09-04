@@ -1,5 +1,3 @@
-// Em um arquivo como 'services/FormMatriculaGerarPDFService.ts'
-
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { BrowserWindow } from 'electron';
@@ -28,7 +26,7 @@ export class FormMatriculaGerarPDFService {
             const win = new BrowserWindow({
                 show: false,
                 webPreferences: {
-                    sandbox: false, // Necessário para carregar conteúdo local/data URL em versões mais recentes do Electron
+                    sandbox: false,
                 },
             });
 
@@ -37,11 +35,16 @@ export class FormMatriculaGerarPDFService {
             const pdfBuffer = await win.webContents.printToPDF({
                 printBackground: true,
                 pageSize: 'A4',
+                margins: {
+                    top: 0.4,
+                    bottom: 0.4,
+                    left: 0.4,
+                    right: 0.4
+                }
             });
 
             await fs.writeFile(caminhoArquivo, pdfBuffer);
 
-            // Garante que a janela seja destruída antes de retornar
             if (!win.isDestroyed()) {
                 win.destroy();
             }
@@ -59,9 +62,9 @@ export class FormMatriculaGerarPDFService {
      */
     public gerarHTMLFicha(matricula: Matricula): string {
         // Funções auxiliares para renderização
-        const renderRadio = (value?: boolean) => value === undefined ? 'Não informado' : (value ? 'Sim' : 'Não');
+        const renderRadio = (value?: boolean) => value === undefined ? '&nbsp;' : (value ? 'Sim' : 'Não');
         const renderField = (value?: string) => value || '&nbsp;';
-        const renderSexo = (value?: 'M' | 'F') => value === 'M' ? 'Masculino' : (value === 'F' ? 'Feminino' : '&nbsp;');
+        const renderSexo = (value?: 'M' | 'F' | '') => value === 'M' ? 'Masculino' : (value === 'F' ? 'Feminino' : '&nbsp;');
 
         return `
     <!DOCTYPE html>
@@ -70,52 +73,139 @@ export class FormMatriculaGerarPDFService {
         <meta charset="UTF-8">
         <title>Ficha Individual do Educando</title>
         <style>
-            body { font-family: Arial, sans-serif; font-size: 9pt; color: #333; }
-            .container { border: 1px solid #ccc; padding: 15px; }
-            .header { text-align: center; margin-bottom: 20px; }
-            .header h1 { font-size: 14pt; margin: 0; }
-            .header h2 { font-size: 11pt; margin: 5px 0; }
-            .header h3 { font-size: 10pt; font-weight: normal; margin: 5px 0; }
-            
-            .fieldset { border: 1px solid #000; margin-bottom: 10px; padding: 0 10px 10px; }
-            .legend { font-weight: bold; font-size: 9.5pt; padding: 0 5px; margin-left: 10px; }
-            
-            .grid { display: grid; gap: 0px 10px; }
-            .field { margin-top: 8px; }
-            .field .label { font-size: 7pt; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; }
-            .field .value { border-bottom: 1px solid #666; padding: 2px 1px; min-height: 14px; }
-            .field .value.small-padding { padding: 1px; }
+            @page {
+                size: A4;
+                margin: 1cm;
+            }
+            body { 
+                font-family: Arial, sans-serif; 
+                font-size: 8pt; 
+                color: #000;
+                line-height: 1.2;
+            }
+            .header-container {
+                border: 1.5px solid #000;
+                margin-bottom: 5px;
+            }
+            .header-grid {
+                display: grid;
+                grid-template-columns: 1fr 6fr 3fr;
+                align-items: center;
+                text-align: center;
+            }
+            .header-grid > div {
+                padding: 4px;
+            }
+            .header-grid .logo {
+                border-right: 1.5px solid #000;
+            }
+            .header-grid .title {
+                border-right: 1.5px solid #000;
+            }
+            .header-grid h1 { font-size: 11pt; font-weight: bold; margin: 0; }
+            .header-grid h2 { font-size: 8pt; font-weight: normal; margin: 0; }
+            .header-grid h3 { font-size: 9pt; font-weight: bold; margin: 0; }
+            .course-title {
+                border-top: 1.5px solid #000;
+                text-align: center;
+                padding: 4px;
+                font-size: 10pt;
+                font-weight: bold;
+                background-color: #f0f0f0;
+            }
 
+            .fieldset { 
+                border: 1px solid #000; 
+                margin-bottom: 4px; 
+                padding: 0 8px 8px; 
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .legend { 
+                font-weight: bold; 
+                font-size: 8.5pt; 
+                padding: 0 5px; 
+                margin-left: 10px;
+                width: auto;
+            }
+            .grid { 
+                display: grid; 
+                gap: 0 8px;
+                width: 100%;
+            }
+            .field { 
+                margin-top: 4px; 
+            }
+            .field .label { 
+                font-size: 6.5pt; 
+                font-weight: bold; 
+                text-transform: uppercase; 
+                margin-bottom: 1px; 
+            }
+            .field .value { 
+                border-bottom: 0.5px solid #333; 
+                padding: 1px; 
+                min-height: 12px;
+                font-weight: bold;
+                font-size: 8pt;
+            }
+            
             .g-col-1 { grid-column: span 1; } .g-col-2 { grid-column: span 2; }
             .g-col-3 { grid-column: span 3; } .g-col-4 { grid-column: span 4; }
             .g-col-5 { grid-column: span 5; } .g-col-6 { grid-column: span 6; }
             .g-col-7 { grid-column: span 7; } .g-col-8 { grid-column: span 8; }
             .g-col-9 { grid-column: span 9; } .g-col-10 { grid-column: span 10; }
             .g-col-11 { grid-column: span 11; } .g-col-12 { grid-column: span 12; }
+            .g-col-13 { grid-column: span 13; } .g-col-14 { grid-column: span 14; }
+            .g-col-15 { grid-column: span 15; } .g-col-16 { grid-column: span 16; }
 
-            .sub-section-title { font-weight: bold; font-size: 8pt; margin-top: 12px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
-            .signature-box { margin-top: 40px; text-align: center; }
-            .signature-line { border-top: 1px solid #000; margin: 0 auto; width: 80%; }
-            .signature-label { font-size: 8pt; font-weight: bold; }
+            .sub-legend { font-weight: bold; font-size: 7.5pt; margin-top: 6px; }
+
+            .signature-box { 
+                margin-top: 20px; 
+                text-align: center; 
+                width: 45%;
+            }
+            .signature-line { 
+                border-top: 1px solid #000; 
+                margin-bottom: 2px;
+            }
+            .signature-label { 
+                font-size: 7pt; 
+                font-weight: bold; 
+            }
         </style>
     </head>
     <body>
-        <div class="header">
-            <h1>FICHA INDIVIDUAL DO EDUCANDO</h1>
-            <h2>${renderField(matricula.tituloCurso)}</h2>
+        <div class="header-container">
+            <div class="header-grid">
+                <div class="logo">
+                     <img src="data:image/png;base64,${this.getBrasaoBase64()}" alt="Brasão" style="height: 50px; margin: 0 auto;">
+                </div>
+                <div class="title">
+                    <h1>GOVERNO DO ESTADO DA PARAÍBA</h1>
+                    <h2>SECRETARIA DE ESTADO DA EDUCAÇÃO</h2>
+                </div>
+                <div class="ficha-title">
+                    <h3>FICHA INDIVIDUAL DO EDUCANDO</h3>
+                </div>
+            </div>
+            <div class="course-title">
+                ${renderField(matricula.tituloCurso)}
+            </div>
         </div>
 
         <div class="fieldset">
             <legend class="legend">1. DADOS DA UNIDADE DE ENSINO</legend>
-            <div class="grid" style="grid-template-columns: repeat(12, 1fr);">
-                <div class="field g-col-9"><div class="label">UNIDADE DE ENSINO</div><div class="value">COLÉGIO DA POLÍCIA MILITAR ESTUDANTE REBECA CRISTINA ALVES SIMÕES</div></div>
-                <div class="field g-col-3"><div class="label">GREC</div><div class="value">1º</div></div>
+            <div class="grid" style="grid-template-columns: repeat(16, 1fr);">
+                <div class="field g-col-12"><div class="label">UNIDADE DE ENSINO</div><div class="value">COLÉGIO DA POLÍCIA MILITAR ESTUDANTE REBECA CRISTINA ALVES SIMÕES</div></div>
+                <div class="field g-col-4"><div class="label">GREC</div><div class="value">1º</div></div>
                 <div class="field g-col-4"><div class="label">1.3 DEPENDÊNCIA ADMINISTRATIVA</div><div class="value">ESTADUAL</div></div>
                 <div class="field g-col-4"><div class="label">1.4 DEC. DE CRIAÇÃO</div><div class="value">16094 DE 07/02/1994</div></div>
+                <div class="field g-col-8"><div class="label">1.5 ATO QUE AUTORIZOU O FUNCIONAMENTO</div><div class="value">RES. Nº 210/14 DE 19/09/2014</div></div>
+                <div class="field g-col-12"><div class="label">1.6 ATO QUE RECONHECEU O FUNCIONAMENTO</div><div class="value">CEE/PB Nº 001/2015, DOE 01/02/2015</div></div>
                 <div class="field g-col-4"><div class="label">1.9 TELEFONE</div><div class="value">3213-8207 / 8701</div></div>
-                <div class="field g-col-6"><div class="label">1.5 ATO QUE AUTORIZOU O FUNCIONAMENTO</div><div class="value">RES. Nº 210/14 DE 19/09/2014</div></div>
-                <div class="field g-col-6"><div class="label">1.6 ATO QUE RECONHECEU O FUNCIONAMENTO</div><div class="value">CEE/PB Nº 001/2015, DOE 01/02/2015</div></div>
-                <div class="field g-col-10"><div class="label">1.7 MUNICÍPIO</div><div class="value">JOÃO PESSOA</div></div>
+                <div class="field g-col-14"><div class="label">1.7 MUNICÍPIO</div><div class="value">JOÃO PESSOA</div></div>
                 <div class="field g-col-2"><div class="label">1.8 UF</div><div class="value">PB</div></div>
             </div>
         </div>
@@ -138,14 +228,14 @@ export class FormMatriculaGerarPDFService {
                 <div class="field g-col-4"><div class="label">CPF</div><div class="value">${renderField(matricula.cpf)}</div></div>
                 <div class="field g-col-4"><div class="label">2.16 CERT. DE RESERVISTA</div><div class="value">${renderField(matricula.reservista)}</div></div>
                 
-                <div class="sub-section-title g-col-12">INFORMAÇÕES ADICIONAIS</div>
+                <div class="sub-legend g-col-12">INFORMAÇÕES ADICIONAIS</div>
                 <div class="field g-col-3"><div class="label">BOLSA FAMÍLIA?</div><div class="value">${renderRadio(matricula.bolsaFamilia)}</div></div>
                 <div class="field g-col-3"><div class="label">NIS</div><div class="value">${renderField(matricula.nis)}</div></div>
                 <div class="field g-col-6"><div class="label">Nº DO CARTÃO DO SUS</div><div class="value">${renderField(matricula.cartaoSus)}</div></div>
                 <div class="field g-col-3"><div class="label">PCD?</div><div class="value">${renderRadio(matricula.pcd)}</div></div>
                 <div class="field g-col-9"><div class="label">QUAL A DEFICIÊNCIA?</div><div class="value">${renderField(matricula.pcdDetalhes)}</div></div>
 
-                <div class="sub-section-title g-col-12">FILIAÇÃO</div>
+                <div class="sub-legend g-col-12">FILIAÇÃO</div>
                 <div class="field g-col-8"><div class="label">2.25 NOME DO PAI</div><div class="value">${renderField(matricula.nomePai)}</div></div>
                 <div class="field g-col-4"><div class="label">VIVO?</div><div class="value">${renderRadio(matricula.paiVivo)}</div></div>
                 <div class="field g-col-8"><div class="label">2.26 NOME DA MÃE</div><div class="value">${renderField(matricula.nomeMae)}</div></div>
@@ -165,7 +255,7 @@ export class FormMatriculaGerarPDFService {
             </div>
         </div>
 
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 4px;">
             <div class="fieldset" style="flex: 1;">
                 <legend class="legend">7. ATIVIDADES EXTRACLASSES</legend>
                 <div class="grid" style="grid-template-columns: 1fr;">
@@ -186,7 +276,7 @@ export class FormMatriculaGerarPDFService {
             </div>
         </div>
 
-        <div style="display: flex; justify-content: space-around;">
+        <div style="display: flex; justify-content: space-around; padding: 10px 0;">
              <div class="signature-box">
                 <div class="signature-line"></div>
                 <div class="signature-label">Ass. do Educando ou Responsável</div>
@@ -199,5 +289,24 @@ export class FormMatriculaGerarPDFService {
     </body>
     </html>
     `;
+    }
+
+    private getBrasaoBase64(): string {
+        try {
+            // Usar o caminho correto para o brasão
+            const brasaoPath = path.join(process.cwd(), 'src', 'renderer', 'images', 'brasao.png');
+
+            console.log('Tentando carregar o brasão de:', brasaoPath);
+
+            if (!fs.existsSync(brasaoPath)) {
+                console.error(`O arquivo não existe no caminho: ${brasaoPath}`);
+                return this.getDefaultBrasaoBase64();
+            }
+
+            const imageBuffer = fs.readFileSync(brasaoPath);
+            return imageBuffer.toString('base64');
+        } catch (error) {
+            console.error('Erro ao carregar o brasão:', error);
+        }
     }
 }

@@ -13,8 +13,6 @@ export function initFormMatricula(root: HTMLElement) {
     const pcdDetailsContainer = root.querySelector<HTMLElement>('#pcd-details-container')!;
     const pcdDetails = root.querySelector<HTMLInputElement>('#pcd-details')!;
 
-    // --- Funções de Inicialização e Helpers ---
-
     function initMatricula(): Matricula {
         return new Matricula();
     }
@@ -32,14 +30,14 @@ export function initFormMatricula(root: HTMLElement) {
             return checkedRadio ? checkedRadio.value : '';
         };
 
-        matricula.bolsaFamilia = getRadioValue('bolsa_familia') === 'sim';
+        matricula.bolsaFamilia = getRadioValue('bolsaFamilia') === 'sim';
         matricula.pcd = getRadioValue('pcd') === 'sim';
-        matricula.paiVivo = getRadioValue('pai_vivo') === 'sim';
-        matricula.maeViva = getRadioValue('mae_viva') === 'sim';
-        matricula.utilizaTransporteEscolar = getRadioValue('transporte_escolar') === 'sim';
-        matricula.podeUsarBicicleta = getRadioValue('bicicleta_substituicao') === 'sim';
+        matricula.paiVivo = getRadioValue('paiVivo') === 'sim';
+        matricula.maeViva = getRadioValue('maeViva') === 'sim';
+        matricula.utilizaTransporteEscolar = getRadioValue('utilizaTransporteEscolar') === 'sim';
+        matricula.podeUsarBicicleta = getRadioValue('podeUsarBicicleta') === 'sim';
 
-        const regiao = getRadioValue('residencia');
+        const regiao = getRadioValue('regiaoOndeReside');
         if (regiao === 'rural' || regiao === 'urbana') {
             matricula.regiaoOndeReside = regiao === 'rural' ? 'Rural' : 'Urbana';
         }
@@ -55,7 +53,6 @@ export function initFormMatricula(root: HTMLElement) {
         return matricula;
     }
 
-    // --- NOVO MÉTODO PARA PREENCHIMENTO DE TESTE ---
     function fillFormForTesting() {
         console.log("🚀 Preenchendo formulário com dados de teste...");
 
@@ -79,18 +76,18 @@ export function initFormMatricula(root: HTMLElement) {
             municipioResponsavel: "João Pessoa", ufResponsavel: "PB", telefoneResponsavel: "(83) 99999-8888",
             esporte: "Futebol", cultura: "Leitura", arte: "Desenho", observacoes: "Este é um preenchimento automático para fins de teste.",
             pcdDetalhes: 'Nenhuma, apenas para teste da funcionalidade.', sexo: 'M',
+            tituloCurso: 'Ensino Fundamental 2',
         };
 
         Object.entries(dummyData).forEach(([key, value]) => setInputValue(key, value));
 
-        setInputValue('course_selector', 'Ensino Fundamental 2');
-        setRadioValue('bolsa_familia', 'sim');
+        setRadioValue('bolsaFamilia', 'sim');
         setRadioValue('pcd', 'sim');
-        setRadioValue('pai_vivo', 'sim');
-        setRadioValue('mae_viva', 'sim');
-        setRadioValue('residencia', 'urbana');
-        setRadioValue('transporte_escolar', 'nao');
-        setRadioValue('bicicleta_substituicao', 'sim');
+        setRadioValue('paiVivo', 'sim');
+        setRadioValue('maeViva', 'sim');
+        setRadioValue('regiaoOndeReside', 'urbana');
+        setRadioValue('utilizaTransporteEscolar', 'nao');
+        setRadioValue('podeUsarBicicleta', 'sim');
 
         courseSelector.dispatchEvent(new Event('change', { bubbles: true }));
         form.querySelector<HTMLInputElement>('input[name="pcd"][value="sim"]')?.dispatchEvent(new Event('change', { bubbles: true }));
@@ -159,12 +156,10 @@ export function initFormMatricula(root: HTMLElement) {
         }
     });
 
-    // --- Inicialização da UI ---
     const pcdSim = root.querySelector<HTMLInputElement>('input[name="pcd"][value="sim"]');
     if (!pcdSim?.checked) {
         pcdDetailsContainer.classList.add('hidden');
     }
 
-
-    fillFormForTesting()
+    (window as any).preencherFormulario = fillFormForTesting;
 }

@@ -1,9 +1,6 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import fs from "node:fs";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isDev = !!process.env.VITE_DEV_SERVER_URL;
 let win: BrowserWindow | null = null;
 
@@ -18,7 +15,7 @@ async function createWindow() {
             sandbox: true
         }
     });
-
+    win.webContents.openDevTools();
     if (isDev) {
         await win.loadURL(process.env.VITE_DEV_SERVER_URL!);
         win.webContents.openDevTools();

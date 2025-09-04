@@ -1,6 +1,3 @@
-// @ts-ignore - import raw
-import formMatriculaHtml from "./pages/form-matricula.html?raw";
-import formInscricaoHtml from "./pages/form-inscricao.html?raw";
 import { initFormMatricula } from "./pages/form-matricula";
 import "./index.css";
 import {initFormInscricao} from "./pages/form-inscricao";
@@ -8,15 +5,18 @@ import {initFormInscricao} from "./pages/form-inscricao";
 const main = document.getElementById("main-content")!;
 const links = document.querySelectorAll<HTMLAnchorElement>(".nav-link");
 
-function loadFormMatricula( ) {
-    main.innerHTML = formMatriculaHtml;
+async function loadFormMatricula() {
+    const response = await fetch('./pages/form-matricula.html');
+    main.innerHTML = await response.text();
     initFormMatricula(main);
 }
 
-function loadInscricao() {
-    main.innerHTML = formInscricaoHtml;
+async function loadInscricao() {
+    const response = await fetch('./pages/form-inscricao.html');
+    main.innerHTML = await response.text();
     initFormInscricao(main);
 }
+
 
 links.forEach(a => {
     a.addEventListener("click", (e) => {

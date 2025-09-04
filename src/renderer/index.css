@@ -5,14 +5,6 @@
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
 /* informe as fontes de conteúdo no V4 usando @source */
-@source "./src/renderer/**/*.{html,ts,tsx,js,jsx,vue}";
-@source "./src/renderer/pages/**/*.html";
+@source "./**/*.{html,ts,tsx,js,jsx,vue}";
+@source "./pages/**/*.html";
 
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
-}

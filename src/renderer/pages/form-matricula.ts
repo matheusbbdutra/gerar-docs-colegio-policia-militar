@@ -67,13 +67,17 @@ export function initFormMatricula(root: HTMLElement) {
         };
 
         const dummyData = {
-            nomeEducando: "Aluno de Teste da Silva", inep: "123456789012", periodo: "Manhã", ano: "8º Ano", nivelEnsino: "Fundamental II",
+            registroMatricula: "2024-0001", nomeEducando: "Aluno de Teste da Silva", inep: "123456789012", periodo: "Manhã", ano: "8º Ano", nivelEnsino: "Fundamental II",
             raca: "Parda", dataNascimento: "2010-05-15", estadoCivil: "Solteiro(a)", naturalidade: "João Pessoa", ufNatural: "PB",
             cpf: "111.222.333-44", nis: "98765432100", cartaoSus: "700123456789012",
             registroNascimentoCartorio: "Cartório Exemplo", registroNascimentoLivro: "Livro A-01", registroNascimentoFolha: "Folha 25",
-            rg: "5.432.109 SSP/PB", nomePai: "Pai de Teste Souza", nomeMae: "Mãe de Teste da Silva",
+            rg: "5.432.109 SSP/PB", nomePai: "Pai de Teste Souza", cpfPai: "222.333.444-55", rgPai: "1.234.567 SSP/PB",
+            nomeMae: "Mãe de Teste da Silva", cpfMae: "333.444.555-66", rgMae: "7.654.321 SSP/PB",
             nomeResponsavel: "Mãe de Teste da Silva", grauParentesco: "Mãe", enderecoResponsavel: "Rua dos Testes, 123, Bairro Fictício",
             municipioResponsavel: "João Pessoa", ufResponsavel: "PB", telefoneResponsavel: "(83) 99999-8888",
+            procedenciaUnidadeEnsino: "Escola Anterior", procedenciaPeriodo: "Tarde", procedenciaAno: "7º Ano", procedenciaNivelEnsino: "Fundamental I",
+            procedenciaEndereco: "Rua da Escola, 100", procedenciaMunicipio: "Outra Cidade", procedenciaUF: "PB", procedenciaTelefone: "(83) 98888-7777",
+            educacaoFisica: "Apto para atividades físicas.",
             esporte: "Futebol", cultura: "Leitura", arte: "Desenho", observacoes: "Este é um preenchimento automático para fins de teste.",
             pcdDetalhes: 'Nenhuma, apenas para teste da funcionalidade.', sexo: 'M',
             tituloCurso: 'Ensino Fundamental 2',

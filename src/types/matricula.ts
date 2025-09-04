@@ -2,6 +2,7 @@
 
 export class Matricula {
     // Seção 2: Dados do Educando
+    registroMatricula: string = '';
     nomeEducando: string = '';
     inep: string = '';
     periodo: string = '';
@@ -21,14 +22,21 @@ export class Matricula {
     bolsaFamilia: boolean = false;
     nis: string = '';
     cartaoSus: string = '';
+    registroNascimentoCartorio: string = '';
+    registroNascimentoLivro: string = '';
+    registroNascimentoFolha: string = '';
     pcd: boolean = false;
     pcdDetalhes: string = '';
 
     // Filiação
     nomePai: string = '';
     paiVivo: boolean = false;
+    cpfPai: string = '';
+    rgPai: string = '';
     nomeMae: string = '';
     maeViva: boolean = false;
+    cpfMae: string = '';
+    rgMae: string = '';
 
     // Seção 3: Dados do Responsável
     nomeResponsavel: string = '';
@@ -37,6 +45,19 @@ export class Matricula {
     municipioResponsavel: string = '';
     ufResponsavel: string = '';
     telefoneResponsavel: string = '';
+
+    // Seção 4: Procedência Escolar
+    procedenciaUnidadeEnsino: string = '';
+    procedenciaPeriodo: string = '';
+    procedenciaAno: string = '';
+    procedenciaNivelEnsino: string = '';
+    procedenciaEndereco: string = '';
+    procedenciaMunicipio: string = '';
+    procedenciaUF: string = '';
+    procedenciaTelefone: string = '';
+
+    // Seção 6: Educação Física
+    educacaoFisica: string = '';
 
     // Seção 7: Atividades Extraclasses
     esporte: string = '';

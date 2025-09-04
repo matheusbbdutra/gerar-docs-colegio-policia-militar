@@ -81,7 +81,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-2 printable-grid">
                     <div>
                         <label for="reg-matricula" class="block text-sm font-medium text-gray-700">REGISTRO DE MATRÍCULA</label>
-                        <input type="text" id="reg-matricula" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" id="reg-matricula" name="registroMatricula" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div class="lg:col-span-2">
                         <label for="nome-educando" class="block text-sm font-medium text-gray-700">2.1 NOME DO EDUCANDO</label>
@@ -210,11 +210,11 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">CPF (Pai)</label>
-                            <input type="text" name="cpf_pai" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <input type="text" name="cpfPai" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">RG (Pai)</label>
-                            <input type="text" name="rg_pai" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <input type="text" name="rgPai" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                         </div>
                     </div>
 
@@ -232,11 +232,11 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">CPF (Mãe)</label>
-                            <input type="text" name="cpf_mae" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <input type="text" name="cpfMae" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">RG (Mãe)</label>
-                            <input type="text" name="rg_mae" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <input type="text" name="rgMae" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                         </div>
                     </div>
                 </div>
@@ -277,35 +277,35 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-2 printable-grid">
                     <div class="lg:col-span-4">
                         <label class="block text-sm font-medium text-gray-700">4.1 UNIDADE DE ENSINO DE PROCEDÊNCIA</label>
-                        <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" name="procedenciaUnidadeEnsino" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">4.2 PERÍODO</label>
-                        <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" name="procedenciaPeriodo" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">4.3 ANO</label>
-                        <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" name="procedenciaAno" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700">4.4 NÍVEL DE ENSINO</label>
-                        <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" name="procedenciaNivelEnsino" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div class="lg:col-span-4">
                         <label class="block text-sm font-medium text-gray-700">4.5 ENDEREÇO (AV, RUA, Nº, BAIRRO)</label>
-                        <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" name="procedenciaEndereco" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700">4.6 MUNICÍPIO</label>
-                        <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" name="procedenciaMunicipio" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">4.7 UF</label>
-                        <input type="text" maxlength="2" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="text" name="procedenciaUF" maxlength="2" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">4.8 TELEFONE</label>
-                        <input type="tel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <input type="tel" name="procedenciaTelefone" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
                     </div>
                 </div>
             </fieldset>
@@ -328,7 +328,7 @@
                 <legend class="font-bold text-lg px-2 text-gray-700">6. Dados de Educaçao Física</legend>
                 <div class="p-2">
                     <label>
-                        <textarea rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"></textarea>
+                        <textarea name="educacaoFisica" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"></textarea>
                     </label>
                 </div>
             </fieldset>

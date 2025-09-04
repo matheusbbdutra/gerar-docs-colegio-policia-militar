@@ -2,6 +2,7 @@
 
 export class Matricula {
     // Seção 2: Dados do Educando
+    registroMatricula: string = '';
     nomeEducando: string = '';
     inep: string = '';
     periodo: string = '';
@@ -13,6 +14,9 @@ export class Matricula {
     estadoCivil: string = '';
     naturalidade: string = '';
     ufNatural: string = '';
+    cartorioNascimento: string = '';
+    livroNascimento: string = '';
+    folhaNascimento: string = '';
     cpf: string = '';
     rg: string = '';
     tituloEleitor: string = '';
@@ -21,14 +25,28 @@ export class Matricula {
     bolsaFamilia: boolean = false;
     nis: string = '';
     cartaoSus: string = '';
+    registroNascimentoCartorio: string = '';
+    registroNascimentoLivro: string = '';
+    registroNascimentoFolha: string = '';
     pcd: boolean = false;
     pcdDetalhes: string = '';
+
+    // Endereço do Educando
+    enderecoEducando: string = '';
+    municipioEducando: string = '';
+    ufEducando: string = '';
+    telefoneEducando: string = '';
+    pontoReferenciaEducando: string = '';
 
     // Filiação
     nomePai: string = '';
     paiVivo: boolean = false;
+    cpfPai: string = '';
+    rgPai: string = '';
     nomeMae: string = '';
     maeViva: boolean = false;
+    cpfMae: string = '';
+    rgMae: string = '';
 
     // Seção 3: Dados do Responsável
     nomeResponsavel: string = '';
@@ -37,6 +55,27 @@ export class Matricula {
     municipioResponsavel: string = '';
     ufResponsavel: string = '';
     telefoneResponsavel: string = '';
+    pontoReferenciaResponsavel: string = '';
+
+    // Seção 4: Procedência Escolar
+    procedenciaUnidadeEnsino: string = '';
+    procedenciaPeriodo: string = '';
+    procedenciaAno: string = '';
+    procedenciaNivelEnsino: string = '';
+    procedenciaEndereco: string = '';
+    procedenciaMunicipio: string = '';
+    procedenciaUF: string = '';
+    procedenciaTelefone: string = '';
+    procedenciaPontoReferencia: string = '';
+
+    // Seção 6: Educação Física
+    educacaoFisica: string = '';
+
+    // Seção 4 (observações livres, se necessário)
+    dadosEscolaresAnteriores: string = '';
+
+    // Seção 5: Dados de Educação Física
+    dadosEducacaoFisica: string = '';
 
     // Seção 7: Atividades Extraclasses
     esporte: string = '';

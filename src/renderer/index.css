@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Importa os ícones do Bootstrap a partir do node_modules */
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/* informe as fontes de conteúdo no V4 usando @source */
+@source "./src/renderer/**/*.{html,ts,tsx,js,jsx,vue}";
+@source "./src/renderer/pages/**/*.html";
+
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+}

@@ -90,9 +90,6 @@ export function initFormMatricula(root: HTMLElement) {
             esporte: "Futebol", cultura: "Leitura", arte: "Desenho", observacoes: "Este é um preenchimento automático para fins de teste.",
             pcdDetalhes: 'Nenhuma, apenas para teste da funcionalidade.', sexo: 'M',
             tituloCurso: 'Ensino Fundamental 2',
-            tituloEleitor: '123456789012',
-            carteiraTrabalho: '1234567890',
-            reservista: 'N/A',
             responsavelPelaTransferencia: 'Funcionário Fulano',
             responsavelPedagogico: 'Prof. Beltrano',
         };
@@ -115,9 +112,45 @@ export function initFormMatricula(root: HTMLElement) {
         console.log("✅ Formulário preenchido!");
     }
 
+    // Helpers: converter para romanos e maiúsculas
+    const toRoman = (n: number) => {
+        const map: [number, string][] = [
+            [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
+            [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
+            [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
+        ];
+        let out = '';
+        for (const [val, sym] of map) {
+            while (n >= val) { out += sym; n -= val; }
+        }
+        return out || '';
+    };
+    const formatTitle = (s: string) => {
+        if (!s) return '';
+        let u = s.toUpperCase();
+        u = u.replace(/\b([0-9]{1,2})\b/g, (m, d) => {
+            const num = parseInt(d, 10);
+            if (num >= 1 && num <= 20) return toRoman(num);
+            return m;
+        });
+        return u;
+    };
+
+    // Atualiza título visível com formatação
     courseSelector.addEventListener('change', (ev) => {
-        courseTitle.textContent = (ev.target as HTMLSelectElement).value;
+        const val = (ev.target as HTMLSelectElement).value;
+        courseTitle.textContent = formatTitle(val);
     });
+
+    // No carregamento: formata rótulos das opções para exibir em romano e maiúsculo
+    Array.from(courseSelector.options).forEach((opt, idx) => {
+        if (idx === 0) return; // mantém placeholder
+        opt.textContent = formatTitle(opt.textContent || opt.value);
+    });
+    // E já sincroniza o título com o valor inicial
+    if (courseSelector.value) {
+        courseTitle.textContent = formatTitle(courseSelector.value);
+    }
 
     pcdRadios.forEach(radio => {
         radio.addEventListener('change', (ev) => {
@@ -135,6 +168,9 @@ export function initFormMatricula(root: HTMLElement) {
             form.reset();
             courseTitle.textContent = '';
             pcdDetailsContainer.classList.add('hidden');
+            // Garante que nenhum campo fique desabilitado após reset
+            form.querySelectorAll<HTMLElement>('[disabled]')
+                .forEach(el => el.removeAttribute('disabled'));
         }
     });
 

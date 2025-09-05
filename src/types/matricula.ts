@@ -19,9 +19,6 @@ export class Matricula {
     folhaNascimento: string = '';
     cpf: string = '';
     rg: string = '';
-    tituloEleitor: string = '';
-    carteiraTrabalho: string = '';
-    reservista: string = '';
     bolsaFamilia: boolean = false;
     nis: string = '';
     cartaoSus: string = '';

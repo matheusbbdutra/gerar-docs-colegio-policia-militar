@@ -38,6 +38,12 @@ export class Matricula {
     telefoneEducando: string = '';
     pontoReferenciaEducando: string = '';
 
+    // Campos adicionais da seção 2
+    responsavelPelaTransferencia: string = '';
+    responsavelPedagogico: string = '';
+    disponivelAosSabados: boolean = false;
+    sairParaAlmocar: boolean = false;
+
     // Filiação
     nomePai: string = '';
     paiVivo: boolean = false;

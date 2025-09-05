@@ -36,6 +36,8 @@ export function initFormMatricula(root: HTMLElement) {
         matricula.maeViva = getRadioValue('maeViva') === 'sim';
         matricula.utilizaTransporteEscolar = getRadioValue('utilizaTransporteEscolar') === 'sim';
         matricula.podeUsarBicicleta = getRadioValue('podeUsarBicicleta') === 'sim';
+        matricula.disponivelAosSabados = getRadioValue('disponivelAosSabados') === 'sim';
+        matricula.sairParaAlmocar = getRadioValue('sairParaAlmocar') === 'sim';
 
         const regiao = getRadioValue('regiaoOndeReside');
         if (regiao === 'rural' || regiao === 'urbana') {
@@ -91,6 +93,8 @@ export function initFormMatricula(root: HTMLElement) {
             tituloEleitor: '123456789012',
             carteiraTrabalho: '1234567890',
             reservista: 'N/A',
+            responsavelPelaTransferencia: 'Funcionário Fulano',
+            responsavelPedagogico: 'Prof. Beltrano',
         };
 
         Object.entries(dummyData).forEach(([key, value]) => setInputValue(key, value));
@@ -102,6 +106,8 @@ export function initFormMatricula(root: HTMLElement) {
         setRadioValue('regiaoOndeReside', 'urbana');
         setRadioValue('utilizaTransporteEscolar', 'nao');
         setRadioValue('podeUsarBicicleta', 'sim');
+        setRadioValue('disponivelAosSabados', 'sim');
+        setRadioValue('sairParaAlmocar', 'nao');
 
         courseSelector.dispatchEvent(new Event('change', { bubbles: true }));
         form.querySelector<HTMLInputElement>('input[name="pcd"][value="sim"]')?.dispatchEvent(new Event('change', { bubbles: true }));

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, shell  } from "electron";
+import { app, BrowserWindow, ipcMain, dialog, shell, globalShortcut } from "electron";
 import path from "node:path";
 import * as fs from 'fs-extra';
 import {FormInscricaoGerarPDFService} from "./services/formInscricaoGerarPDFService";
@@ -12,6 +12,36 @@ let win: BrowserWindow | null = null;
 let dataDir = path.join(app.getPath('userData'), 'gerar-docs');
 let formInscricaoGerarPDF: FormInscricaoGerarPDFService = new FormInscricaoGerarPDFService(dataDir);
 let formMatriculaGerarPDF: FormMatriculaGerarPDFService = new FormMatriculaGerarPDFService(dataDir);
+
+// Permite forçar idioma do Chromium/DevTools (ex.: en-US) se necessário
+const DEVTOOLS_LANG = process.env.DEVTOOLS_LANG;
+if (DEVTOOLS_LANG) {
+    try { app.commandLine.appendSwitch('lang', DEVTOOLS_LANG); } catch {}
+}
+
+// Opções de compatibilidade gráfica (úteis quando DevTools fica preto)
+const DISABLE_GPU = process.env.DISABLE_GPU === '1' || process.env.ELECTRON_DISABLE_GPU === '1' || process.env.DEVTOOLS_SAFE === '1';
+if (DISABLE_GPU) {
+    try { app.disableHardwareAcceleration(); } catch {}
+    try { app.commandLine.appendSwitch('disable-gpu'); } catch {}
+    try { app.commandLine.appendSwitch('disable-gpu-compositing'); } catch {}
+}
+const OZONE_PLATFORM = process.env.OZONE_PLATFORM;
+if (OZONE_PLATFORM) {
+    try { app.commandLine.appendSwitch('ozone-platform', OZONE_PLATFORM); } catch {}
+}
+const OZONE_PLATFORM_HINT = process.env.OZONE_PLATFORM_HINT;
+if (OZONE_PLATFORM_HINT) {
+    try { app.commandLine.appendSwitch('ozone-platform-hint', OZONE_PLATFORM_HINT); } catch {}
+}
+
+function toggleDevToolsDetached(target?: BrowserWindow | null) {
+    const w = target ?? BrowserWindow.getFocusedWindow();
+    if (!w) return;
+    const wc = w.webContents;
+    if (wc.isDevToolsOpened()) wc.closeDevTools();
+    else wc.openDevTools({ mode: 'detach' });
+}
 
 async function createWindow() {
     win = new BrowserWindow({
@@ -27,6 +57,20 @@ async function createWindow() {
     win.webContents.on('did-fail-load', (_, code, desc, url) => console.error('did-fail-load', code, desc, url));
     win.webContents.on('render-process-gone', (_, d) => console.error('render-process-gone', d));
     win.webContents.on('console-message', (_, level, message, line, source) => console.log('renderer:', { level, message, line, source }));
+    // Atalhos para abrir DevTools: Ctrl/Cmd+Shift+I ou F12
+    let lastToggle = 0;
+    win.webContents.on('before-input-event', (event, input) => {
+        const isKeyI = input.code === 'KeyI' || input.key?.toLowerCase?.() === 'i';
+        const combo = (isKeyI && (input.control || input.meta) && input.shift) || input.code === 'F12';
+        if (combo) {
+            const now = Date.now();
+            if (now - lastToggle > 300) {
+                toggleDevToolsDetached(win);
+                lastToggle = now;
+            }
+            event.preventDefault();
+        }
+    });
 
     await fs.ensureDir(dataDir);
     await fs.ensureDir(path.join(dataDir, 'fichas'));
@@ -37,10 +81,26 @@ async function createWindow() {
 
     if (isDev) {
         win.loadURL(process.env.VITE_DEV_SERVER_URL!);
-        win.webContents.openDevTools();
+        win.webContents.openDevTools({ mode: 'detach' });
     } else {
         win.loadFile(path.join(__dirname, "renderer", "index.html"));
+    
     }
+
+    // Atalhos globais (funcionam mesmo sem foco no conteúdo)
+    const registerDebugShortcuts = () => {
+        try { globalShortcut.unregister('CommandOrControl+Shift+I'); } catch {}
+        try { globalShortcut.unregister('F12'); } catch {}
+        globalShortcut.register('CommandOrControl+Shift+I', () => toggleDevToolsDetached(win));
+        globalShortcut.register('F12', () => toggleDevToolsDetached(win));
+    };
+
+    registerDebugShortcuts();
+    win.on('focus', registerDebugShortcuts);
+    win.on('blur', () => {
+        globalShortcut.unregister('CommandOrControl+Shift+I');
+        globalShortcut.unregister('F12');
+    });
 }
 
 function setupIpcHandlers() {
@@ -155,4 +215,9 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
+
+// Libera atalhos globais na saída do app
+app.on('will-quit', () => {
+    globalShortcut.unregisterAll();
 });

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import { Matricula } from '../types/matricula';
 
 export class FormMatriculaGerarPDFService {
@@ -349,6 +349,11 @@ export class FormMatriculaGerarPDFService {
                 <div class="field g-col-2"><div class="label">UF</div><div class="value">${renderField(matricula.ufEducando)}</div></div>
                 <div class="field g-col-3"><div class="label">TELEFONE</div><div class="value">${renderField(matricula.telefoneEducando)}</div></div>
 
+                <div class="field g-col-4"><div class="label">RESP. PELA TRANSF.</div><div class="value">${renderField(matricula.responsavelPelaTransferencia)}</div></div>
+                <div class="field g-col-4"><div class="label">RESP. PEDAGÓGICO</div><div class="value">${renderField(matricula.responsavelPedagogico)}</div></div>
+                <div class="field g-col-2"><div class="label">DISP. AOS SÁBADOS?</div><div class="value">${renderRadio(matricula.disponivelAosSabados)}</div></div>
+                <div class="field g-col-2"><div class="label">SAIR PRA ALMOÇAR?</div><div class="value">${renderRadio(matricula.sairParaAlmocar)}</div></div>
+
                 <div class="sub-legend g-col-12">INFORMAÇÕES ADICIONAIS</div>
                 <div class="field g-col-3"><div class="label">BOLSA FAMÍLIA?</div><div class="value">${renderRadio(matricula.bolsaFamilia)}</div></div>
                 <div class="field g-col-3"><div class="label">NIS</div><div class="value">${renderField(matricula.nis)}</div></div>
@@ -449,20 +454,32 @@ export class FormMatriculaGerarPDFService {
 
     private getBrasaoBase64(): string {
         try {
-            // Usar o caminho correto para o brasão
-            const brasaoPath = path.join(process.cwd(), 'src', 'renderer', 'images', 'brasao.png');
-
-            console.log('Tentando carregar o brasão de:', brasaoPath);
-
-            if (!fs.existsSync(brasaoPath)) {
-                console.error(`O arquivo não existe no caminho: ${brasaoPath}`);
-                return this.getDefaultBrasaoBase64();
+            // 1) Em produção: procurar na pasta de assets do renderer
+            if (app.isPackaged) {
+                const assetsDir = path.join(app.getAppPath(), 'renderer', 'assets');
+                try {
+                    const files = fs.readdirSync(assetsDir);
+                    const candidate = files.find(f => /^brasao-.*\.png$/i.test(f)) || files.find(f => f === 'brasao.png');
+                    if (candidate) {
+                        const p = path.join(assetsDir, candidate);
+                        const buf = fs.readFileSync(p);
+                        return buf.toString('base64');
+                    }
+                } catch {}
             }
 
-            const imageBuffer = fs.readFileSync(brasaoPath);
-            return imageBuffer.toString('base64');
+            // 2) Ambiente de desenvolvimento: caminho do repositório
+            const devPath = path.join(process.cwd(), 'src', 'renderer', 'images', 'brasao.png');
+            if (fs.existsSync(devPath)) {
+                const buf = fs.readFileSync(devPath);
+                return buf.toString('base64');
+            }
+
+            // 3) Fallback vazio
+            return '';
         } catch (error) {
             console.error('Erro ao carregar o brasão:', error);
+            return '';
         }
     }
 }

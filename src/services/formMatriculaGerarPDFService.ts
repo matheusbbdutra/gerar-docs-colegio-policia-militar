@@ -72,6 +72,29 @@ export class FormMatriculaGerarPDFService {
         const renderRadio = (value?: boolean) => value === undefined ? '&nbsp;' : (value ? 'Sim' : 'Não');
         const renderField = (value?: string) => value || '&nbsp;';
         const renderSexo = (value?: 'M' | 'F' | '') => value === 'M' ? 'Masculino' : (value === 'F' ? 'Feminino' : '&nbsp;');
+        const toRoman = (n: number) => {
+            const map: [number, string][] = [
+                [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
+                [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
+                [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
+            ];
+            let out = '';
+            for (const [val, sym] of map) {
+                while (n >= val) { out += sym; n -= val; }
+            }
+            return out || '';
+        };
+        const formatTitle = (s?: string) => {
+            if (!s) return '&nbsp;';
+            let u = s.toUpperCase();
+            // Substitui números arábicos isolados por romanos (1..20)
+            u = u.replace(/\b([0-9]{1,2})\b/g, (m, d) => {
+                const num = parseInt(d, 10);
+                if (num >= 1 && num <= 20) return toRoman(num);
+                return m;
+            });
+            return u;
+        };
 
         return `
     <!DOCTYPE html>
@@ -95,10 +118,10 @@ export class FormMatriculaGerarPDFService {
             }
             body {
                 font-family: Arial, sans-serif; 
-                font-size: 8pt; 
+                font-size: 17pt; 
                 color: #000;
                 line-height: 1.2;
-                overflow: hidden; /* evita quebra para segunda página */
+                overflow: hidden;
             }
             /* Área útil da página (A4 menos 2cm de margem => 190mm x 277mm) */
             #page {
@@ -119,7 +142,7 @@ export class FormMatriculaGerarPDFService {
             .header-grid {
                 display: grid;
                 grid-template-columns: 1fr 6fr 3fr;
-                align-items: center;
+                align-items: stretch; /* garante bordas verticais em altura total */
                 text-align: center;
             }
             .header-grid > div {
@@ -134,11 +157,14 @@ export class FormMatriculaGerarPDFService {
             .header-grid h1 { font-size: 11pt; font-weight: bold; margin: 0; }
             .header-grid h2 { font-size: 8pt; font-weight: normal; margin: 0; }
             .header-grid h3 { font-size: 9pt; font-weight: bold; margin: 0; }
+            .ficha-title { align-self: stretch; display: flex; flex-direction: column; justify-content: flex-start; height: 100%; padding: 0; }
+            /* Barrinha divisória em largura total da coluna, sem recuo */
+            .ficha-title .id-slot { margin-top: 6px; height: 14px; border-bottom: 1px solid #000; width: 100%; }
             .course-title {
                 border-top: 1.5px solid #000;
                 text-align: center;
                 padding: 4px;
-                font-size: 10pt;
+                font-size: 12.5pt;
                 font-weight: bold;
                 background-color: #f0f0f0;
             }
@@ -176,7 +202,7 @@ export class FormMatriculaGerarPDFService {
                 padding: 1px; 
                 min-height: 12px;
                 font-weight: bold;
-                font-size: 8pt;
+                font-size: 9.5pt;
             }
             
             .g-col-1 { grid-column: span 1; } .g-col-2 { grid-column: span 2; }
@@ -233,8 +259,8 @@ export class FormMatriculaGerarPDFService {
 
                   const availablePx = AVAILABLE_HEIGHT_MM * MM_TO_PX;
                   let scale = 1;
-                  const SAFETY = 0.995; // folga mínima para ocupar mais
-                  const MAX_UPSCALE = 1.35; // permite preencher mais a página
+                  const SAFETY = 0.998; // folga mínima para ocupar mais (aumentado)
+                  const MAX_UPSCALE = 1.85; // permite preencher ainda mais a página
                   const MIN_DOWNSCALE = 0.60; // limite para reduzir
                   // Itera até estabilizar ou atingir 6 tentativas
                   for (let i = 0; i < 8; i++) {
@@ -297,10 +323,11 @@ export class FormMatriculaGerarPDFService {
                 </div>
                 <div class="ficha-title">
                     <h3>FICHA INDIVIDUAL DO EDUCANDO</h3>
+                    <div class="id-slot"></div>
                 </div>
             </div>
             <div class="course-title">
-                ${renderField(matricula.tituloCurso)}
+                ${formatTitle(matricula.tituloCurso)}
             </div>
         </div>
 
@@ -339,9 +366,7 @@ export class FormMatriculaGerarPDFService {
                 <div class="field g-col-2"><div class="label">FOLHA</div><div class="value">${renderField(matricula.folhaNascimento)}</div></div>
                 <div class="field g-col-4"><div class="label">2.13 CÉDULA DE IDENTIDADE (Nº, ÓRGÃO, UF)</div><div class="value">${renderField(matricula.rg)}</div></div>
                 <div class="field g-col-4"><div class="label">CPF</div><div class="value">${renderField(matricula.cpf)}</div></div>
-                <div class="field g-col-4"><div class="label">TÍTULO DE ELEITOR</div><div class="value">${renderField(matricula.tituloEleitor)}</div></div>
-                <div class="field g-col-4"><div class="label">CARTEIRA DE TRABALHO</div><div class="value">${renderField(matricula.carteiraTrabalho)}</div></div>
-                <div class="field g-col-4"><div class="label">2.16 CERT. DE RESERVISTA</div><div class="value">${renderField(matricula.reservista)}</div></div>
+                
 
                 <div class="field g-col-12"><div class="label">ENDEREÇO (AV, RUA, Nº, BAIRRO)</div><div class="value">${renderField(matricula.enderecoEducando)}</div></div>
                 <div class="field g-col-12"><div class="label">PONTO DE REFERÊNCIA</div><div class="value">${renderField(matricula.pontoReferenciaEducando)}</div></div>
@@ -413,18 +438,15 @@ export class FormMatriculaGerarPDFService {
                 <legend class="legend">7. ATIVIDADES EXTRACLASSES</legend>
                 <div class="grid" style="grid-template-columns: 1fr;">
                     <div class="field g-col-1"><div class="label">ESPORTE</div><div class="value">${renderField(matricula.esporte)}</div></div>
-                    <div class="field g-col-1"><div class="label">CULTURA</div><div class="value">${renderField(matricula.cultura)}</div></div>
-                    <div class="field g-col-1"><div class="label">ARTE</div><div class="value">${renderField(matricula.arte)}</div></div>
-                    <div class="field g-col-1"><div class="label">OUTRAS</div><div class="value">${renderField(matricula.outrasAtividades)}</div></div>
                 </div>
             </div>
 
             <div class="fieldset" style="flex: 1;">
                 <legend class="legend">8. DADOS DE TRANSPORTE ESCOLAR</legend>
-                <div class="grid" style="grid-template-columns: 1fr;">
-                    <div class="field"><div class="label">8.1 REGIÃO ONDE RESIDE</div><div class="value">${renderField(matricula.regiaoOndeReside)}</div></div>
-                    <div class="field"><div class="label">8.2 UTILIZA TRANSPORTE ESCOLAR?</div><div class="value">${renderRadio(matricula.utilizaTransporteEscolar)}</div></div>
-                    <div class="field"><div class="label">8.3 PODE UTILIZAR A BICICLETA EM SUBSTITUIÇÃO?</div><div class="value">${renderRadio(matricula.podeUsarBicicleta)}</div></div>
+                <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="field g-col-1"><div class="label">8.1 REGIÃO ONDE RESIDE</div><div class="value">${renderField(matricula.regiaoOndeReside)}</div></div>
+                    <div class="field g-col-1"><div class="label">8.2 UTILIZA TRANSPORTE ESCOLAR?</div><div class="value">${renderRadio(matricula.utilizaTransporteEscolar)}</div></div>
+                    <div class="field g-col-1"><div class="label">8.3 PODE UTILIZAR A BICICLETA EM SUBSTITUIÇÃO?</div><div class="value">${renderRadio(matricula.podeUsarBicicleta)}</div></div>
                 </div>
             </div>
         </div>
@@ -454,31 +476,37 @@ export class FormMatriculaGerarPDFService {
 
     private getBrasaoBase64(): string {
         try {
-            // 1) Em produção: procurar na pasta de assets do renderer
+            const dirs: string[] = [];
             if (app.isPackaged) {
-                const assetsDir = path.join(app.getAppPath(), 'renderer', 'assets');
+                dirs.push(
+                    path.join(app.getAppPath(), 'renderer', 'assets'),
+                    path.join(process.resourcesPath, 'renderer', 'assets'),
+                    path.join(process.resourcesPath, 'app.asar', 'renderer', 'assets'),
+                    path.join(__dirname, 'renderer', 'assets'),
+                    path.join(__dirname, '..', 'renderer', 'assets')
+                );
+            }
+            // Dev e fallback
+            dirs.push(
+                path.join(process.cwd(), 'dist', 'renderer', 'assets'),
+                path.join(process.cwd(), 'renderer', 'assets'),
+                path.join(process.cwd(), 'src', 'renderer', 'images')
+            );
+            const isBrasao = (f: string) => /bras[aã]o.*\.png$/i.test(f) || /^brasao-.*\.png$/i.test(f) || /^brasao\.png$/i.test(f);
+            for (const d of dirs) {
                 try {
-                    const files = fs.readdirSync(assetsDir);
-                    const candidate = files.find(f => /^brasao-.*\.png$/i.test(f)) || files.find(f => f === 'brasao.png');
-                    if (candidate) {
-                        const p = path.join(assetsDir, candidate);
+                    if (!fs.existsSync(d)) continue;
+                    const list = fs.readdirSync(d);
+                    const file = list.find(isBrasao) || list.find(f => f.toLowerCase().includes('brasao') && f.toLowerCase().endsWith('.png'));
+                    if (file) {
+                        const p = path.join(d, file);
                         const buf = fs.readFileSync(p);
                         return buf.toString('base64');
                     }
                 } catch {}
             }
-
-            // 2) Ambiente de desenvolvimento: caminho do repositório
-            const devPath = path.join(process.cwd(), 'src', 'renderer', 'images', 'brasao.png');
-            if (fs.existsSync(devPath)) {
-                const buf = fs.readFileSync(devPath);
-                return buf.toString('base64');
-            }
-
-            // 3) Fallback vazio
             return '';
-        } catch (error) {
-            console.error('Erro ao carregar o brasão:', error);
+        } catch {
             return '';
         }
     }

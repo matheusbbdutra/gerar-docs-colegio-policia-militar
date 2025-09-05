@@ -12,15 +12,23 @@ export function initFormInscricao(root: HTMLElement) {
         const frameMilitar = root.querySelector<HTMLElement>('#frameMilitar')!;
         const frameTurmaPmilitar = root.querySelector<HTMLElement>('#frameTurmaPmilitar')!;
         const frameTurmaAmpla = root.querySelector<HTMLElement>('#frameTurmaAmpla')!;
+        const radiosTurmaPmilitar = frameTurmaPmilitar.querySelectorAll<HTMLInputElement>('input[name="turma"]');
+        const radiosTurmaAmpla = frameTurmaAmpla.querySelectorAll<HTMLInputElement>('input[name="turma"]');
 
         if (pmilitarSim?.checked) {
             frameMilitar.style.display = 'grid'; // 'grid' para manter o layout dos campos
             frameTurmaPmilitar.style.display = 'block';
             frameTurmaAmpla.style.display = 'none';
+            // Habilita e exige escolha apenas nas turmas PMPB
+            radiosTurmaPmilitar.forEach(r => { r.disabled = false; r.required = true; });
+            radiosTurmaAmpla.forEach(r => { r.disabled = true; r.required = false; r.checked = false; });
         } else {
             frameMilitar.style.display = 'none';
             frameTurmaPmilitar.style.display = 'none';
             frameTurmaAmpla.style.display = 'block';
+            // Habilita e exige escolha apenas nas turmas Ampla
+            radiosTurmaPmilitar.forEach(r => { r.disabled = true; r.required = false; r.checked = false; });
+            radiosTurmaAmpla.forEach(r => { r.disabled = false; r.required = true; });
         }
     }
 
@@ -29,8 +37,20 @@ export function initFormInscricao(root: HTMLElement) {
         const deficienciaContainer = root.querySelector<HTMLElement>('#deficienciaContainer')!;
         if (pcdSim?.checked) {
             deficienciaContainer.style.display = 'block';
+            deficienciaContainer.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')
+                .forEach(el => { el.disabled = false; });
         } else {
             deficienciaContainer.style.display = 'none';
+            // Ao ocultar, limpa e desabilita para não bloquear validação
+            deficienciaContainer.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')
+                .forEach(el => {
+                    if (el instanceof HTMLInputElement && (el.type === 'checkbox' || el.type === 'radio')) {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                    el.disabled = true;
+                });
         }
     }
 
@@ -60,6 +80,8 @@ export function initFormInscricao(root: HTMLElement) {
 
             popularTurmas('turmaAmplaOptions', turmas);
             popularTurmas('turmaPmilitarOptions', turmas);
+            // Ajusta required/disabled conforme a seleção atual (após popular os radios)
+            toggleCamposMilitar();
 
         } catch (error) {
             console.error('Erro ao carregar turmas:', error);
@@ -129,6 +151,89 @@ export function initFormInscricao(root: HTMLElement) {
         });
     }
 
+    // Preenche o formulário de inscrição com dados de teste e expõe no console
+    function fillFormInscricaoForTesting() {
+        const log = (...args: any[]) => console.log('[Teste-Inscricao]', ...args);
+        const setInputValue = (name: string, value: string) => {
+            const el = form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`[name="${name}"]`);
+            if (el) {
+                (el as any).value = value;
+            } else {
+                log('Campo não encontrado:', name);
+            }
+        };
+        const setChecked = (name: string, value: string) => {
+            const el = form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${value}"]`);
+            if (el) {
+                el.checked = true;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            } else {
+                log('Opção não encontrada:', name, value);
+            }
+        };
+        const setCheckbox = (name: string, checked = true) => {
+            const el = form.querySelector<HTMLInputElement>(`input[type="checkbox"][name="${name}"]`);
+            if (el) el.checked = checked;
+        };
+
+        log('Preenchendo campos básicos...');
+        setInputValue('nome', 'Candidato de Teste');
+        setInputValue('cpfCandidato', '123.456.789-00');
+        setInputValue('dataNascimento', '15/05/2012');
+        setInputValue('nomeMae', 'Mãe Exemplo');
+        setInputValue('cpfMae', '111.222.333-44');
+        setInputValue('nomePai', 'Pai Exemplo');
+        setInputValue('cpfPai', '222.333.444-55');
+        setInputValue('responsavelLegal', 'Responsável Exemplo');
+        setInputValue('cpfResponsavel', '333.444.555-66');
+        setInputValue('telefone1', '(83) 98888-0000');
+        setInputValue('telefone2', '(83) 97777-1111');
+        setInputValue('telefone3', '(83) 93333-2222');
+
+        log('Ajustando PCD e detalhes...');
+        setChecked('pcd', 'sim'); // exibe container
+        setCheckbox('defFisica', true);
+        setCheckbox('defTEA', true);
+        setInputValue('defOutro', 'Observação de teste');
+
+        log('Configurando vínculo PM (Ampla Concorrência)...');
+        setChecked('pmilitar', 'Não'); // mostra frameTurmaAmpla
+
+        // Garante estados de habilitação corretos imediatamente
+        try { toggleCamposMilitar(); } catch {}
+
+        // Garante que turmas estejam carregadas e seleciona a primeira disponível
+        const selecionarPrimeiraTurma = (tentativa = 0) => {
+            // Reaplica toggle a cada tentativa para manter estados consistentes
+            try { toggleCamposMilitar(); } catch {}
+            const radioDisponivel = form.querySelector<HTMLInputElement>('section#frameTurmaAmpla input[name="turma"]:not([disabled])')
+                || form.querySelector<HTMLInputElement>('input[name="turma"]:not([disabled])');
+            if (radioDisponivel) {
+                radioDisponivel.checked = true;
+                // Dispara eventos para qualquer listener
+                radioDisponivel.dispatchEvent(new Event('input', { bubbles: true }));
+                radioDisponivel.dispatchEvent(new Event('change', { bubbles: true }));
+                log('Turma selecionada:', radioDisponivel.value);
+                return;
+            }
+            if (tentativa < 50) {
+                // Na primeira tentativa força recarregar as turmas
+                if (tentativa === 0) { try { (carregarTurmasDisponiveis as any)(); } catch {} }
+                setTimeout(() => selecionarPrimeiraTurma(tentativa + 1), 120);
+            } else {
+                log('Não foi possível selecionar uma turma automaticamente.');
+            }
+        };
+        selecionarPrimeiraTurma();
+
+        log('Documentação de exemplo...');
+        setCheckbox('docDeclaracaoEscola', true);
+        setCheckbox('docIdentidadeResponsavel', true);
+        setCheckbox('docCertidaoNascimento', true);
+
+        log('✅ Formulário de inscrição preenchido para teste.');
+    }
+
     root.querySelectorAll('input[name="pmilitar"]').forEach(radio =>
         radio.addEventListener('change', toggleCamposMilitar)
     );
@@ -139,6 +244,9 @@ export function initFormInscricao(root: HTMLElement) {
     btnLimpar.addEventListener('click', () => {
         if (confirm('Tem certeza que deseja limpar todos os campos?')) {
             form.reset();
+            // Reabilita quaisquer campos que possam ter sido desabilitados
+            form.querySelectorAll<HTMLElement>('[disabled]')
+                .forEach(el => el.removeAttribute('disabled'));
             toggleCamposMilitar();
             toggleCamposPcd();
         }
@@ -359,4 +467,7 @@ export function initFormInscricao(root: HTMLElement) {
     // Chama as funções de toggle para definir o estado inicial correto do formulário
     toggleCamposMilitar();
     toggleCamposPcd();
+
+    // Expor no console para testes: window.preencherFormularioInscricao()
+    (window as any).preencherFormularioInscricao = fillFormInscricaoForTesting;
 }

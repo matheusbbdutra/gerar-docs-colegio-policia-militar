@@ -19,20 +19,15 @@ if (DEVTOOLS_LANG) {
     try { app.commandLine.appendSwitch('lang', DEVTOOLS_LANG); } catch {}
 }
 
-// Opções de compatibilidade gráfica (úteis quando DevTools fica preto)
-const DISABLE_GPU = process.env.DISABLE_GPU === '1' || process.env.ELECTRON_DISABLE_GPU === '1' || process.env.DEVTOOLS_SAFE === '1';
-if (DISABLE_GPU) {
-    try { app.disableHardwareAcceleration(); } catch {}
-    try { app.commandLine.appendSwitch('disable-gpu'); } catch {}
-    try { app.commandLine.appendSwitch('disable-gpu-compositing'); } catch {}
-}
-const OZONE_PLATFORM = process.env.OZONE_PLATFORM;
-if (OZONE_PLATFORM) {
-    try { app.commandLine.appendSwitch('ozone-platform', OZONE_PLATFORM); } catch {}
-}
-const OZONE_PLATFORM_HINT = process.env.OZONE_PLATFORM_HINT;
-if (OZONE_PLATFORM_HINT) {
-    try { app.commandLine.appendSwitch('ozone-platform-hint', OZONE_PLATFORM_HINT); } catch {}
+// Compatibilidade gráfica: força renderização por software para evitar DevTools “tela preta”
+try { app.disableHardwareAcceleration(); } catch {}
+try { app.commandLine.appendSwitch('disable-gpu'); } catch {}
+try { app.commandLine.appendSwitch('disable-gpu-compositing'); } catch {}
+try { app.commandLine.appendSwitch('use-gl', 'swiftshader'); } catch {}
+try { app.commandLine.appendSwitch('use-angle', 'swiftshader'); } catch {}
+// Em Linux/Wayland alguns ambientes precisam do X11 para DevTools
+if (process.platform === 'linux' && (process.env.XDG_SESSION_TYPE || '').toLowerCase() === 'wayland') {
+    try { app.commandLine.appendSwitch('ozone-platform', 'x11'); } catch {}
 }
 
 function toggleDevToolsDetached(target?: BrowserWindow | null) {
@@ -51,27 +46,9 @@ async function createWindow() {
             preload: path.join(__dirname, "preload.js"),
             nodeIntegration: false,
             contextIsolation: true,
-            sandbox: false // Sandbox: true pode restringir o acesso do preload
+            sandbox: false
         }
     });
-    win.webContents.on('did-fail-load', (_, code, desc, url) => console.error('did-fail-load', code, desc, url));
-    win.webContents.on('render-process-gone', (_, d) => console.error('render-process-gone', d));
-    win.webContents.on('console-message', (_, level, message, line, source) => console.log('renderer:', { level, message, line, source }));
-    // Atalhos para abrir DevTools: Ctrl/Cmd+Shift+I ou F12
-    let lastToggle = 0;
-    win.webContents.on('before-input-event', (event, input) => {
-        const isKeyI = input.code === 'KeyI' || input.key?.toLowerCase?.() === 'i';
-        const combo = (isKeyI && (input.control || input.meta) && input.shift) || input.code === 'F12';
-        if (combo) {
-            const now = Date.now();
-            if (now - lastToggle > 300) {
-                toggleDevToolsDetached(win);
-                lastToggle = now;
-            }
-            event.preventDefault();
-        }
-    });
-
     await fs.ensureDir(dataDir);
     await fs.ensureDir(path.join(dataDir, 'fichas'));
 
@@ -81,26 +58,10 @@ async function createWindow() {
 
     if (isDev) {
         win.loadURL(process.env.VITE_DEV_SERVER_URL!);
-        win.webContents.openDevTools({ mode: 'detach' });
+        win.webContents.openDevTools();
     } else {
         win.loadFile(path.join(__dirname, "renderer", "index.html"));
-    
     }
-
-    // Atalhos globais (funcionam mesmo sem foco no conteúdo)
-    const registerDebugShortcuts = () => {
-        try { globalShortcut.unregister('CommandOrControl+Shift+I'); } catch {}
-        try { globalShortcut.unregister('F12'); } catch {}
-        globalShortcut.register('CommandOrControl+Shift+I', () => toggleDevToolsDetached(win));
-        globalShortcut.register('F12', () => toggleDevToolsDetached(win));
-    };
-
-    registerDebugShortcuts();
-    win.on('focus', registerDebugShortcuts);
-    win.on('blur', () => {
-        globalShortcut.unregister('CommandOrControl+Shift+I');
-        globalShortcut.unregister('F12');
-    });
 }
 
 function setupIpcHandlers() {

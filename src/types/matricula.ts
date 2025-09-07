@@ -82,8 +82,6 @@ export class Matricula {
 
     // Seção 7: Atividades Extraclasses
     esporte: string = '';
-    cultura: string = '';
-    arte: string = '';
     outrasAtividades: string = '';
 
     // Seção 8: Transporte

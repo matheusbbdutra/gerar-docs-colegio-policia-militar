@@ -1,4 +1,5 @@
 import { Candidato} from "../../types/candidato";
+import { alertModal, confirmModal } from "../ui/modal";
 
 
 export function initFormInscricao(root: HTMLElement) {
@@ -241,22 +242,65 @@ export function initFormInscricao(root: HTMLElement) {
         radio.addEventListener('change', toggleCamposPcd)
     );
 
-    btnLimpar.addEventListener('click', () => {
-        if (confirm('Tem certeza que deseja limpar todos os campos?')) {
-            form.reset();
-            // Reabilita quaisquer campos que possam ter sido desabilitados
-            form.querySelectorAll<HTMLElement>('[disabled]')
-                .forEach(el => el.removeAttribute('disabled'));
-            toggleCamposMilitar();
-            toggleCamposPcd();
+    btnLimpar.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const ok = await confirmModal('Tem certeza que deseja limpar todos os campos?', { title: 'Limpar formulário', confirmText: 'Limpar', cancelText: 'Cancelar', danger: true });
+        if (!ok) return;
+
+        // Reseta o formulário para o estado inicial
+        form.reset();
+
+        // Reativa e limpa todos os campos editáveis
+        const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input, textarea, select'));
+        fields.forEach(el => {
+            el.removeAttribute('disabled');
+            el.removeAttribute('aria-disabled');
+
+            if (el instanceof HTMLInputElement) {
+                el.disabled = false;
+                if (el.type === 'radio' || el.type === 'checkbox') {
+                    el.checked = false;
+                } else if (!el.readOnly) {
+                    el.value = '';
+                }
+            } else if (el instanceof HTMLTextAreaElement) {
+                el.disabled = false;
+                if (!el.readOnly) el.value = '';
+            } else if (el instanceof HTMLSelectElement) {
+                el.disabled = false;
+                el.selectedIndex = 0;
+            }
+        });
+
+        // Atualiza estados dependentes (PCD e Vínculo PM)
+        try { toggleCamposPcd(); } catch {}
+        try { toggleCamposMilitar(); } catch {}
+
+        // Rola para o topo (instantâneo para não bloquear digitação)
+        try {
+            const scrollEl = document.scrollingElement || document.documentElement;
+            if (scrollEl && 'scrollTo' in scrollEl) {
+                (scrollEl as any).scrollTo(0, 0);
+            } else {
+                window.scrollTo(0, 0);
+            }
+        } catch {
+            window.scrollTo(0, 0);
         }
+        (root as HTMLElement).scrollTop = 0;
+
+        // Como salvaguarda, remove qualquer "disabled" residual em containers (ex.: fieldset)
+        form.querySelectorAll<HTMLElement>('[disabled]')
+            .forEach(el => el.removeAttribute('disabled'));
+
+        // Não forçar foco automático; evita conflitos com o próximo clique
     });
 
     const btnGerarPdf = root.querySelector<HTMLButtonElement>('#btnGerarPdf')!;
     btnGerarPdf.addEventListener('click', async (e) => {
         e.preventDefault();
         if (!form.checkValidity()) {
-            alert('Por favor, preencha todos os campos obrigatórios (*).');
+            await alertModal('Por favor, preencha todos os campos obrigatórios (*).', { title: 'Dados incompletos' });
             return;
         }
 
@@ -283,7 +327,7 @@ export function initFormInscricao(root: HTMLElement) {
         // Obter turma selecionada
         const turmaSelecionada = form.querySelector('input[name="turma"]:checked') as HTMLInputElement;
         if (!turmaSelecionada) {
-            alert('Por favor, selecione uma turma.');
+            await alertModal('Por favor, selecione uma turma.', { title: 'Dados incompletos' });
             return;
         }
         candidato.turma = turmaSelecionada.value;
@@ -291,35 +335,35 @@ export function initFormInscricao(root: HTMLElement) {
 
         // Validações
         if (!candidato.nome?.trim()) {
-            alert('Por favor, informe o nome do candidato.');
+            await alertModal('Por favor, informe o nome do candidato.', { title: 'Dados incompletos' });
             return;
         }
         if (!candidato.dataNascimento) {
-            alert('Por favor, informe a data de nascimento do candidato.');
+            await alertModal('Por favor, informe a data de nascimento do candidato.', { title: 'Dados incompletos' });
             return;
         }
         if (!candidato.responsavelLegal?.trim()) {
-            alert('Por favor, informe o nome do responsável legal.');
+            await alertModal('Por favor, informe o nome do responsável legal.', { title: 'Dados incompletos' });
             return;
         }
         if (!candidato.cpfResponsavel?.trim()) {
-            alert('Por favor, informe o CPF do responsável legal.');
+            await alertModal('Por favor, informe o CPF do responsável legal.', { title: 'Dados incompletos' });
             return;
         }
 
         const dataRegex = /^\d{2}\/\d{2}\/\d{4}$/;
         if (!dataRegex.test(candidato.dataNascimento)) {
-            alert('A data de nascimento deve estar no formato DD/MM/AAAA.');
+            await alertModal('A data de nascimento deve estar no formato DD/MM/AAAA.', { title: 'Dados inválidos' });
             return;
         }
 
         if (candidato.filhoNetoPM) {
             if (!candidato.nomePM?.trim()) {
-                alert('Por favor, informe o nome do parente militar.');
+                await alertModal('Por favor, informe o nome do parente militar.', { title: 'Dados incompletos' });
                 return;
             }
             if (!candidato.matriculaPM?.trim()) {
-                alert('Por favor, informe a matrícula do parente militar.');
+                await alertModal('Por favor, informe a matrícula do parente militar.', { title: 'Dados incompletos' });
                 return;
             }
         }
@@ -329,13 +373,13 @@ export function initFormInscricao(root: HTMLElement) {
         try {
             const resultado = await window.api.gerarPdfInscricao(candidato);
             if (resultado) {
-                alert('PDF gerado com sucesso!');
+                await alertModal('PDF gerado com sucesso!', { title: 'Sucesso' });
             } else {
-                alert('Operação cancelada pelo usuário.');
+                await alertModal('Operação cancelada pelo usuário.', { title: 'Cancelado' });
             }
         } catch (error) {
             console.error("Erro ao gerar PDF:", error);
-            alert(`Erro ao gerar PDF: ${(error as Error).message}`);
+            await alertModal(`Erro ao gerar PDF: ${(error as Error).message}`, { title: 'Erro' });
         }
     });
 
@@ -343,7 +387,7 @@ export function initFormInscricao(root: HTMLElement) {
     btnImprimirFicha.addEventListener('click', async (e) => {
         e.preventDefault();
         if (!form.checkValidity()) {
-            alert('Por favor, preencha todos os campos obrigatórios (*).');
+            await alertModal('Por favor, preencha todos os campos obrigatórios (*).', { title: 'Dados incompletos' });
             return;
         }
 
@@ -370,7 +414,7 @@ export function initFormInscricao(root: HTMLElement) {
         // Obter turma selecionada
         const turmaSelecionada = form.querySelector('input[name="turma"]:checked') as HTMLInputElement;
         if (!turmaSelecionada) {
-            alert('Por favor, selecione uma turma.');
+            await alertModal('Por favor, selecione uma turma.', { title: 'Dados incompletos' });
             return;
         }
         candidato.turma = turmaSelecionada.value;
@@ -378,35 +422,35 @@ export function initFormInscricao(root: HTMLElement) {
 
         // Validações
         if (!candidato.nome?.trim()) {
-            alert('Por favor, informe o nome do candidato.');
+            await alertModal('Por favor, informe o nome do candidato.', { title: 'Dados incompletos' });
             return;
         }
         if (!candidato.dataNascimento) {
-            alert('Por favor, informe a data de nascimento do candidato.');
+            await alertModal('Por favor, informe a data de nascimento do candidato.', { title: 'Dados incompletos' });
             return;
         }
         if (!candidato.responsavelLegal?.trim()) {
-            alert('Por favor, informe o nome do responsável legal.');
+            await alertModal('Por favor, informe o nome do responsável legal.', { title: 'Dados incompletos' });
             return;
         }
         if (!candidato.cpfResponsavel?.trim()) {
-            alert('Por favor, informe o CPF do responsável legal.');
+            await alertModal('Por favor, informe o CPF do responsável legal.', { title: 'Dados incompletos' });
             return;
         }
 
         const dataRegex = /^\d{2}\/\d{2}\/\d{4}$/;
         if (!dataRegex.test(candidato.dataNascimento)) {
-            alert('A data de nascimento deve estar no formato DD/MM/AAAA.');
+            await alertModal('A data de nascimento deve estar no formato DD/MM/AAAA.', { title: 'Dados inválidos' });
             return;
         }
 
         if (candidato.filhoNetoPM) {
             if (!candidato.nomePM?.trim()) {
-                alert('Por favor, informe o nome do parente militar.');
+                await alertModal('Por favor, informe o nome do parente militar.', { title: 'Dados incompletos' });
                 return;
             }
             if (!candidato.matriculaPM?.trim()) {
-                alert('Por favor, informe a matrícula do parente militar.');
+                await alertModal('Por favor, informe a matrícula do parente militar.', { title: 'Dados incompletos' });
                 return;
             }
         }
@@ -430,7 +474,7 @@ export function initFormInscricao(root: HTMLElement) {
         } catch (error) {
             console.error('Erro ao imprimir ficha:', error);
             // @ts-ignore
-            alert('Erro ao imprimir ficha: ' + error.message);
+            await alertModal('Erro ao imprimir ficha: ' + error.message, { title: 'Erro' });
         }
     });
 
@@ -470,4 +514,19 @@ export function initFormInscricao(root: HTMLElement) {
 
     // Expor no console para testes: window.preencherFormularioInscricao()
     (window as any).preencherFormularioInscricao = fillFormInscricaoForTesting;
+
+    // Atalho: Ctrl+Alt+2 para preencher dados de teste (somente quando esta tela está ativa)
+    const inscricaoShortcut = (ev: KeyboardEvent) => {
+        if (!ev.ctrlKey || !ev.altKey) return;
+        const is2 = ev.key === '2' || ev.code === 'Digit2';
+        if (!is2) return;
+        ev.preventDefault();
+        try { fillFormInscricaoForTesting(); } catch (e) { console.error('Erro no atalho de teste (Inscrição):', e); }
+    };
+    const wAny = window as any;
+    if (wAny.__inscricaoShortcutHandler) {
+        document.removeEventListener('keydown', wAny.__inscricaoShortcutHandler);
+    }
+    document.addEventListener('keydown', inscricaoShortcut);
+    wAny.__inscricaoShortcutHandler = inscricaoShortcut;
 }

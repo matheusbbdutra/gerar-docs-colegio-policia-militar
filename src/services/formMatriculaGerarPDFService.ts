@@ -334,7 +334,7 @@ export class FormMatriculaGerarPDFService {
         <div class="fieldset">
             <legend class="legend">1. DADOS DA UNIDADE DE ENSINO</legend>
             <div class="grid" style="grid-template-columns: repeat(16, 1fr);">
-                <div class="field g-col-12"><div class="label">UNIDADE DE ENSINO</div><div class="value">COLÉGIO DA POLÍCIA MILITAR ESTUDANTE REBECA CRISTINA ALVES SIMÕES</div></div>
+                <div class="field g-col-12"><div class="label">UNIDADE DE ENSINO</div><div class="value">ECIT ESTUDANTE REBECA CRISTINA ALVES SIMÕES</div></div>
                 <div class="field g-col-4"><div class="label">GREC</div><div class="value">1º</div></div>
                 <div class="field g-col-4"><div class="label">1.3 DEPENDÊNCIA ADMINISTRATIVA</div><div class="value">ESTADUAL</div></div>
                 <div class="field g-col-4"><div class="label">1.4 DEC. DE CRIAÇÃO</div><div class="value">16094 DE 07/02/1994</div></div>

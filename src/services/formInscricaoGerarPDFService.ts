@@ -297,7 +297,7 @@ export class FormInscricaoGerarPDFService {
         </div>
 
         <div class="date-section">
-            João Pessoa, ____/____/______
+            João Pessoa - PB, ${dataGeracao}
         </div>
 
         <!-- COMPROVANTE DE INSCRIÇÃO -->
@@ -325,7 +325,7 @@ export class FormInscricaoGerarPDFService {
             </div>
 
             <div class="date-section">
-                João Pessoa, ${dataGeracao}
+                João Pessoa - PB, ${dataGeracao}
             </div>
         </div>
 

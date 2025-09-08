@@ -68,6 +68,7 @@ export class FormMatriculaGerarPDFService {
      * Gera o conteúdo HTML da ficha de matrícula com base nos dados fornecidos.
      */
     public gerarHTMLFicha(matricula: Matricula): string {
+        const dataGeracao = new Date().toLocaleDateString('pt-BR');
         // Funções auxiliares para renderização
         const renderRadio = (value?: boolean) => value === undefined ? '&nbsp;' : (value ? 'Sim' : 'Não');
         const renderField = (value?: string) => value || '&nbsp;';
@@ -229,6 +230,13 @@ export class FormMatriculaGerarPDFService {
                 font-size: 7pt; 
                 font-weight: bold; 
             }
+            /* Harmonizar com a ficha de inscrição */
+            .date-section {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 12px;
+                font-weight: bold;
+            }
         </style>
         <script>
             (function() {
@@ -334,7 +342,7 @@ export class FormMatriculaGerarPDFService {
         <div class="fieldset">
             <legend class="legend">1. DADOS DA UNIDADE DE ENSINO</legend>
             <div class="grid" style="grid-template-columns: repeat(16, 1fr);">
-                <div class="field g-col-12"><div class="label">UNIDADE DE ENSINO</div><div class="value">ECIT ESTUDANTE REBECA CRISTINA ALVES SIMÕES</div></div>
+                <div class="field g-col-12"><div class="label">UNIDADE DE ENSINO</div><div class="value">ECIT COLÉGIO DA POLÍCIA MILITAR ESTUDANTE REBECA CRISTINA ALVES SIMÕES</div></div>
                 <div class="field g-col-4"><div class="label">GREC</div><div class="value">1º</div></div>
                 <div class="field g-col-4"><div class="label">1.3 DEPENDÊNCIA ADMINISTRATIVA</div><div class="value">ESTADUAL</div></div>
                 <div class="field g-col-4"><div class="label">1.4 DEC. DE CRIAÇÃO</div><div class="value">16094 DE 07/02/1994</div></div>
@@ -361,9 +369,9 @@ export class FormMatriculaGerarPDFService {
                 <div class="field g-col-4"><div class="label">2.9 NATURAL DE</div><div class="value">${renderField(matricula.naturalidade)}</div></div>
                 <div class="field g-col-2"><div class="label">2.10 UF</div><div class="value">${renderField(matricula.ufNatural)}</div></div>
                 <div class="field g-col-4"><div class="label">2.11 REGISTRO DE MATRÍCULA</div><div class="value">${renderField(matricula.registroMatricula)}</div></div>
-                <div class="field g-col-5"><div class="label">2.12 CARTÓRIO</div><div class="value">${renderField(matricula.cartorioNascimento)}</div></div>
-                <div class="field g-col-1"><div class="label">LIVRO</div><div class="value">${renderField(matricula.livroNascimento)}</div></div>
-                <div class="field g-col-2"><div class="label">FOLHA</div><div class="value">${renderField(matricula.folhaNascimento)}</div></div>
+                <div class="field g-col-5"><div class="label">2.12 CARTÓRIO</div><div class="value">${renderField(matricula.registroNascimentoCartorio || matricula.cartorioNascimento)}</div></div>
+                <div class="field g-col-1"><div class="label">LIVRO</div><div class="value">${renderField(matricula.registroNascimentoLivro || matricula.livroNascimento)}</div></div>
+                <div class="field g-col-2"><div class="label">FOLHA</div><div class="value">${renderField(matricula.registroNascimentoFolha || matricula.folhaNascimento)}</div></div>
                 <div class="field g-col-4"><div class="label">2.13 CÉDULA DE IDENTIDADE (Nº, ÓRGÃO, UF)</div><div class="value">${renderField(matricula.rg)}</div></div>
                 <div class="field g-col-4"><div class="label">CPF</div><div class="value">${renderField(matricula.cpf)}</div></div>
                 
@@ -468,6 +476,8 @@ export class FormMatriculaGerarPDFService {
                 <div class="signature-label">Ass. do Funcionário/Matrícula</div>
             </div>
         </div>
+
+        <div class="date-section">João Pessoa - PB, ${dataGeracao}</div>
         </div>
     </body>
     </html>
